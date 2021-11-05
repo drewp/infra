@@ -108,13 +108,19 @@ apt.packages(packages=['docker.io'], no_recommends=True)
 
 apt.packages(packages=[
     'build-essential',
+    'i2c-tools',
+    'keychain',
+    'python3-docker',
+    'python3-invoke',
     'python3-pip',
     'python3-virtualenv',
-    'python3-docker',
     'rsync',
-    'i2c-tools',
     'sysstat',
 ])
+
+if not is_pi:
+    apt.packages(packages='mlocate', present=False)
+    apt.packages(packages='plocate')
 
 #
 # ssh
