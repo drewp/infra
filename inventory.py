@@ -3,5 +3,9 @@ ssh_key = '/root/.ssh/id_ecdsa'
 
 big = [
     'bang',
-    'slash'
+    'dash',
+    'slash',
+]
+pi = [
+    'frontbed',
 ]
