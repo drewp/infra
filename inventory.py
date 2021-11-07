@@ -8,4 +8,5 @@ big = [
 ]
 pi = [
     'frontbed',
+    ('garage', {'ssh_hostname': '10.2.0.19'}),
 ]

@@ -2,7 +2,7 @@ from pyinfra import host
 from pyinfra.operations import server
 from pyinfra.facts.server import LinuxDistribution
 
-is_pi = host.get_fact(LinuxDistribution)['name'] == 'Debian'
+is_pi = host.get_fact(LinuxDistribution)['name'] in ['Debian', 'Raspbian GNU/Linux']
 
 # raspbian took 1000 for 'pi' group, but drewp is rarely used on pi
 # setups so hopefully it won't matter much that drew group has a

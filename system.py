@@ -3,7 +3,8 @@ from pyinfra import host
 from pyinfra.operations import server, files, apt, ssh, systemd
 from pyinfra.facts.server import LinuxDistribution
 
-is_pi = host.get_fact(LinuxDistribution)['name'] == 'Debian'
+bang_is_old = True  # remove after upgrade
+is_pi = host.get_fact(LinuxDistribution)['name'] in ['Debian', 'Raspbian GNU/Linux']
 is_wifi_pi = host.name in ['frontdoor', 'living']
 
 TZ = 'America/Los_Angeles'
@@ -98,27 +99,28 @@ if not is_pi:
     apt.key(keyserver='keyserver.ubuntu.com', keyid='F24AEA9FB05498B7')
     apt.repo(src="deb [arch=amd64,i386] https://repo.steampowered.com/steam/ stable steam")
 
-if is_pi:
+if False and is_pi:
     apt.key(src="https://download.docker.com/linux/raspbian/gpg")
     apt.repo(src="deb [arch=armhf] https://download.docker.com/linux/raspbian stretch stable")
     apt.repo(src='deb http://deb.debian.org/debian/ unstable main')  # maybe for WG
 
-# don't try to get aufs-dkms on rpi-- https://github.com/docker/for-linux/issues/709
-apt.packages(packages=['docker.io'], no_recommends=True)
-
 apt.packages(packages=[
     'build-essential',
-    'i2c-tools',
-    'keychain',
-    'python3-docker',
-    'python3-invoke',
-    'python3-pip',
-    'python3-virtualenv',
+#    'i2c-tools',
     'rsync',
-    'sysstat',
 ])
 
 if not is_pi:
+    apt.packages(packages=[
+        'keychain',
+        'python3-docker',
+        'python3-invoke',
+        'python3-pip',
+        'python3-virtualenv',
+        'sysstat',
+    ])
+
+if not is_pi and not bang_is_old:
     apt.packages(packages='mlocate', present=False)
     apt.packages(packages='plocate')
 
@@ -147,8 +149,11 @@ if is_pi:
 # docker (delete this?)
 #
 
-files.put(src='files/docker_daemon.json', dest='/etc/docker/daemon.json')
-systemd.service(service='docker', running=True, enabled=True, restarted=True)
+# don't try to get aufs-dkms on rpi-- https://github.com/docker/for-linux/issues/709
+if not is_pi:
+    apt.packages(packages=['docker.io'], no_recommends=True)
+    files.put(src='files/docker_daemon.json', dest='/etc/docker/daemon.json')
+    systemd.service(service='docker', running=True, enabled=True, restarted=True)
 
 if not is_pi:
     files.line(path='/etc/update-manager/release-upgrades', line="^Prompt=", replace="Prompt=normal")
