@@ -1,0 +1,26 @@
+network:
+  version: 2
+  ethernets:
+    {{ipv4Interface}}:
+{% if host.name in ['prime'] %}
+      link-local: [ ipv4 ]
+      addresses: ['{{ipv4Address}}/32']
+      routes:
+      - to: 0.0.0.0/0
+        via: 162.243.138.1
+      nameservers:
+        search: ['bigasterisk.com']
+        addresses: 
+        - 10.5.0.1
+        - 8.8.4.4
+        - 8.8.8.8
+{% else %}
+      dhcp4: true
+#      routes:
+#      - to: 0.0.0.0/0
+#        via: {{ipv4Address.rsplit('.', 1)[0]}}.1
+#      nameservers:
+#        search: ['bigasterisk.com']
+#        addresses: 
+#        - 10.2.0.1
+{% endif %}

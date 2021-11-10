@@ -1,0 +1,54 @@
+user=nobody
+keep-in-foreground
+log-facility=-
+
+listen-address={{ net }}.0.1
+{% if net == "10.2" %}
+listen-address=127.0.0.1
+{% endif %}
+bind-interfaces
+
+domain-needed
+no-resolv
+# i didn't say --all-servers, but it was behaving like that
+server=208.201.224.11
+#server=208.201.224.33
+#server=8.8.4.4
+#server=8.8.8.8
+local=/bigasterisk.com/
+no-hosts
+addn-hosts=/opt/dnsmasq/{{ net }}/hosts
+local-ttl=30
+mx-host=bigasterisk.com,prime6.bigasterisk.com
+cache-size=10000
+neg-ttl=60
+dns-forward-max=1000
+domain=bigasterisk.com
+
+log-dhcp
+dhcp-sequential-ip
+{% if net == "10.1" %}
+dhcp-broadcast
+dhcp-authoritative
+dhcp-option=option:domain-name,bigasterisk.com
+dhcp-hostsfile=/opt/dnsmasq/{{ net }}/dhcp_hosts
+dhcp-leasefile=/opt/dnsmasq/{{ net }}/leases
+dhcp-range=enp1s0,10.1.0.0,static,infinite
+dhcp-range=tag:!known,enp1s0,10.1.0.100,10.1.0.180
+dhcp-option=enp1s0,option:dns-server,10.1.0.1
+dhcp-option=enp1s0,option:router,10.1.0.1
+{% endif %}
+
+{% if net == "10.2" %}
+dhcp-broadcast
+dhcp-authoritative
+dhcp-option=option:domain-name,bigasterisk.com
+dhcp-hostsfile=/opt/dnsmasq/{{ net }}/dhcp_hosts
+dhcp-leasefile=/opt/dnsmasq/{{ net }}/leases
+dhcp-range=ens5,10.2.0.0,static,infinite
+dhcp-range=tag:!known,ens5,10.2.0.21,10.2.0.120,24h
+dhcp-option=ens5,option:dns-server,10.2.0.1
+dhcp-option=ens5,option:router,10.2.0.1
+{% endif %}
+
+# net==10.5 is not used for dhcp at all

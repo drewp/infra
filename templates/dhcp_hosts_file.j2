@@ -1,0 +1,38 @@
+# by pyinfra
+
+162.243.138.136 prime-ext.bigasterisk.com public.bigasterisk.com primary.bigasterisk.com maildirfetch.bigasterisk.com vpn-ext.bigasterisk.com
+
+# This is the dns trick-- hosts at home should use the local address
+# for 'bigasterisk.com' etc instead of taking a trip to prime.
+10.2.0.1 bang bang.bigasterisk.com bigasterisk.com file.bigasterisk.com local.fantasyfamegame.com imap.bigasterisk.com repo.bigasterisk.com mail.bigasterisk.com puppet.bigasterisk.com computeracronym.quickwitretort.com csigen.quickwitretort.com drewp.quickwitretort.com  kelsi.quickwitretort.com owncloud.bigasterisk.com photo.bigasterisk.com projects.bigasterisk.com quickwitretort.com whatsplayingnext.com whopickedthis.com aask.bigasterisk.com bebop.bigasterisk.com brazilog.bigasterisk.com cinepaint.bigasterisk.com craigslist.bigasterisk.com cuisine.bigasterisk.com cvs.bigasterisk.com dafnaandjonas.bigasterisk.com darcs.bigasterisk.com daveandlisa.bigasterisk.com digibook.bigasterisk.com gasuse.bigasterisk.com graphite.bigasterisk.com johnmuir.bigasterisk.com jazz.bigasterisk.com js.bigasterisk.com karinandjohn.bigasterisk.com light9.bigasterisk.com linuxmovies.bigasterisk.com lisa.bigasterisk.com lisaanddave.bigasterisk.com magma.bigasterisk.com maps.bigasterisk.com monk.bigasterisk.com ov099.bigasterisk.com picreferer.bigasterisk.com rayz.bigasterisk.com seabird.bigasterisk.com semfile.bigasterisk.com sinai.bigasterisk.com stef.bigasterisk.com wedding.bigasterisk.com wedding-john-karin.bigasterisk.com www.bigasterisk.com vpn-home.bigasterisk.com file.bigasterisk.com
+
+{% if net != '10.5' %}
+# so bang can see these names
+10.1.0.5 dash.bigasterisk.com
+10.1.0.6 slash.bigasterisk.com
+{% endif %}
+
+10.5.0.1   bang5.bigasterisk.com local.bigasterisk.com mail.bigasterisk.com 
+10.5.0.2   prime5.bigasterisk.com prime.bigasterisk.com prime.vpn-ext.bigasterisk.com
+10.5.0.5   dash5.bigasterisk.com
+10.5.0.6   slash5.bigasterisk.com
+10.5.0.8   piedmont5.bigasterisk.com
+10.5.0.10  kitchen5.bigasterisk.com
+10.5.0.11  living5.bigasterisk.com
+10.5.0.12  frontdoor5.bigasterisk.com
+10.5.0.13  workshop5.bigasterisk.com
+10.5.0.14  garage5.bigasterisk.com
+10.5.0.15  bed5.bigasterisk.com
+10.5.0.16  changing5.bigasterisk.com
+10.5.0.17  frontbed5.bigasterisk.com
+10.5.0.30  dot5.bigasterisk.com
+10.5.0.99  piedmont5.bigasterisk.com
+10.5.0.110 plus5.bigasterisk.com
+10.5.0.112 drew-note85.bigasterisk.com
+
+
+{% if net == '10.5' %}
+10.5.0.1   bang.bigasterisk.com
+10.5.0.2   prime.bigasterisk.com
+10.5.0.5   dash.bigasterisk.com
+{% endif %}
