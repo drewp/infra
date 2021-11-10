@@ -1,0 +1,12 @@
+# written by pyinfra
+
+[Interface]
+# {{ host.name }}
+Address = 10.7.0.2/16
+PrivateKey = {{priv_key}}
+ListenPort = 2113
+
+{{ peer_block('monk',             'aroc8MNdTnKg175HYxri+Yr1afuaC0awyr6TfGMpvxI=', '10.7.0.42/32') }}
+{{ peer_block('firebert (phone)', 'Rr9N6dGbMLzl6wuEJlaq67gNQ5QW2ZcwD4Brn/3XJyA=', '10.7.0.88/32') }}
+{{ peer_block('bird',             '9CkgqeAiX1GhNM+t9m2nJD5QJHx9iTCFRB5c1x7h704=', '10.7.0.46/32') }}
+

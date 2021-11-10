@@ -1,0 +1,25 @@
+# written by pyinfra
+
+[Interface]
+# {{ host.name }}
+Address = {{wireguard_ip}}/24
+PrivateKey = {{priv_key}}
+ListenPort = 1195
+
+{% if host.name == 'bang' %}
+    {{ peer_block('dash',        'X39ewB2uYLZTFaG+RFeLpyOrnCgjc4wRKrcV0Jz3sTM=', '10.5.0.5/32',  'dash:1195') }}
+    {{ peer_block('dot',         'sav1VQE1XzbOGfNjDRxcHAmEWtmVGYC1B7KXH+5IKxY=', '10.5.0.30/32', 'dot:1195') }}
+    {{ peer_block('frontbed',    'ENhRhEgGaFfwV74MqYBHJgkOFpNAF5kVHVK5/tRVTjU=', '10.5.0.17/32', 'frontbed:1195') }}
+    {{ peer_block('garage',      'x2i552K4ApoYYRUnx2HFgJRsdRWizcd4P5IqSZD5iwM=', '10.5.0.14/32', 'garage:1195') }}
+    {{ peer_block('prime',       'vR9lfsUSOIMxkY/k2gRJ6E8ZudccfPpVhrbE9zuxalU=', '10.5.0.0/24',  'public.bigasterisk.com:1195', 50) }}
+    {{ peer_block('slash',       'IRLLt2yFuXVJbpevAj9d84mGAvi6SbJr1AwLAK/pBTM=', '10.5.0.6/32',  'slash:1195') }}
+{% elif host.name == 'prime' %}
+    {{ peer_block('bang',        'pAxirNVF08R6zYyudhTKjZ9fqC9UKMxknfLi5A39QVY=', '10.5.0.0/24') }}
+    {{ peer_block('plus',        'tH2og4BbXaH6BrHSBd73Fx1XT0DxR8vjQxjqHFa913A=', '10.5.0.110/32') }}
+    {{ peer_block('drew-note10', 'QMgx4cmuUTfJ7RH4Q46b54tSQl4eISOmdEney17fnE8=', '10.5.0.112/32') }}
+{% elif host.name == 'plus' %}
+    {{ peer_block('bang',        'pAxirNVF08R6zYyudhTKjZ9fqC9UKMxknfLi5A39QVY=', '10.5.0.0/24', '10.1.0.1:1195', 50) }}
+{% else %}
+    {{ peer_block('bang',        'pAxirNVF08R6zYyudhTKjZ9fqC9UKMxknfLi5A39QVY=', '10.5.0.0/24', '10.1.0.1:1195', 50) }}
+{% endif %}
+
