@@ -51,8 +51,10 @@ if not is_pi:
     apt.key(keyserver='keyserver.ubuntu.com', keyid='8B48AD6246925553')
 
 if is_pi:
-    apt.packages(packages=['dirmngr', 'gnupg2', 'apt-utils'])
-    files.template(src='templates/pi_sources.list.j2', dest='/etc/apt/sources.list', rel='buster')
+    apt.packages(packages=['mandb', 'apt-listchanges'], present=False)
+    files.template(src='templates/pi_sources.list.j2', dest='/etc/apt/sources.list', rel='bullseye')
+    # 'apt upgrade'?
+    apt.packages(update=True, packages=['dirmngr', 'gnupg2', 'apt-utils'])
 
     apt.key(src='https://ftp-master.debian.org/keys/archive-key-8.asc')
     apt.key(src='https://ftp-master.debian.org/keys/archive-key-8-security.asc')
