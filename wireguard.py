@@ -56,4 +56,4 @@ for wireguard_interface in ['wg0', 'bogasterisk']:
     svc = f'wg-quick@{wireguard_interface}.service'
     files.link(path=f'/etc/systemd/system/multi-user.target.wants/{svc}', target='/lib/systemd/system/wg-quick@.service')
 
-    systemd.service(service=svc, daemon_reload=True, running=True, enabled=True)
+    systemd.service(service=svc, daemon_reload=True, restarted=True, enabled=True)
