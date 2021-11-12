@@ -1,7 +1,8 @@
 import os
+
 from pyinfra import host
-from pyinfra.operations import server, files, apt, ssh, systemd
 from pyinfra.facts.server import LinuxDistribution
+from pyinfra.operations import apt, files, server, ssh, systemd
 
 bang_is_old = True  # remove after upgrade
 is_pi = host.get_fact(LinuxDistribution)['name'] in ['Debian', 'Raspbian GNU/Linux']
@@ -66,30 +67,9 @@ if is_pi:
         files.put(dest="/etc/network/interfaces.d/wlan0", src="files/pi_wlan0_powersave")
         ssh.command(host.name, "iw wlan0 set power_save off")
 
-    # see https://www.raspberrypi.org/documentation/configuration/config-txt/memory.md#:~:text=txt-,gpu_mem,-Specifies
-    # to port to pyinfra
-    #- name: unused display; give ram to OS
-    #  lineinfile: dest=/boot/config.txt line="gpu_mem=16" regexp="^gpu_mem="
-    #  when: "'with_x11' not in group_names"
+    files.template(src='templates/boot_config.txt.j2', dest='/boot/config.txt')
 
-    # for beacon
-    #enable_uart=1
-    #dtoverlay=pi3-miniuart-bt
-    #core_freq=250
-
-    # for tiny_screen
-    #to port to pyinfra
-    #- lineinfile: dest=/boot/config.txt line="dtparam=spi=on" regexp="^dtparam=spi="
-
-    # i hope this is deletable
-    # downgrade strictness so I can install from https://archive.raspberrypi.org/
-    # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=907788
-    #- lineinfile: dest=/etc/ssl/openssl.cnf line="#CipherString = DEFAULT@SECLEVEL=2" regexp="CipherString ?="
-
-    # may be fixed in k3s, not sure
-    # raspbian defaults to `iptables -V` -> iptables v1.8.4 (nf_tables), which won't work with k3s
-    # - command: update-alternatives --set iptables /usr/sbin/iptables-legacy
-if not is_pi:
+if not is_pi and host.name != 'prime':
     apt.key(src='https://dl.google.com/linux/linux_signing_key.pub')
     apt.repo(src='deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main')
 
@@ -101,15 +81,12 @@ if not is_pi:
     apt.key(keyserver='keyserver.ubuntu.com', keyid='F24AEA9FB05498B7')
     apt.repo(src="deb [arch=amd64,i386] https://repo.steampowered.com/steam/ stable steam")
 
-if False and is_pi:
-    apt.key(src="https://download.docker.com/linux/raspbian/gpg")
-    apt.repo(src="deb [arch=armhf] https://download.docker.com/linux/raspbian stretch stable")
-    apt.repo(src='deb http://deb.debian.org/debian/ unstable main')  # maybe for WG
-
 apt.packages(packages=[
     'build-essential',
-#    'i2c-tools',
+    # 'i2c-tools',
     'rsync',
+    'dstat',
+    'ifstat',
 ])
 
 if not is_pi:
@@ -174,13 +151,3 @@ if host.name == "bang":
         'zfs-zed',
         'zfs-auto-snapshot',
     ])
-
-# This is usable on pi where we don't care when they reboot:
-#- name: apt_upgrade
-#  apt: upgrade=full
-#- name: Check if a reboot is required
-#  register: file
-#  stat: path=/var/run/reboot-required get_md5=no
-#- name: Reboot the server
-#  command: /sbin/reboot
-#  when: file.stat.exists == true
