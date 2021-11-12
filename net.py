@@ -23,7 +23,12 @@ else:
     files.template(src='templates/resolved.conf.j2', dest='/etc/systemd/resolved.conf')
 systemd.service(service='systemd-resolved.service', running=True, restarted=True)
 
-files.template(src='templates/resolv.conf.j2', dest='/etc/resolv.conf')
+ns = '10.2.0.1'
+if host.name == 'prime':
+    ns = '8.8.8.8'
+elif host.name in ['dash', 'slash']:
+    ns = '10.1.0.1'
+files.template(src='templates/resolv.conf.j2', dest='/etc/resolv.conf', ns=ns)
 
 if host.name in ['dash', 'slash', 'garage']:
     # might need to upgrade pi systemd if there are errors in this part
@@ -38,13 +43,12 @@ if host.name in ['dash', 'slash', 'garage']:
                    ipv4Address=ipv4Address)
     server.shell(commands=['netplan apply'])
 
-if host.name not in ['plus']:
-    apt.packages(packages=['network-manager'], present=False)
+apt.packages(packages=['network-manager'], present=host.name in ['plus'])
 
 if host.name == 'bang':
     files.template(src='templates/bang_interfaces.j2', dest='/etc/network/interfaces', user='root', group='root', mode='644')
     apt.packages(packages=['iptables', 'openntpd', 'ntpdate'])
-    server.shell(commands=['systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target'], user='root')
+    server.shell(commands=['systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target'])
 
     apt.packages(packages=['nfs-kernel-server'])
     files.template(src='templates/bang_exports.j2', dest='/etc/exports')
@@ -78,5 +82,5 @@ if host.name == 'prime':
                replace="MaxFileSec=7day")
 
     for port in [80, 443]:
-        files.template(src="webforward.service.j2", dest=f"/etc/systemd/system/web_forward_{port}.service", port=port)
+        files.template(src="templates/webforward.service.j2", dest=f"/etc/systemd/system/web_forward_{port}.service", port=port)
         systemd.service(service=f'web_forward_{port}', enabled=True, restarted=True)
