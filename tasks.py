@@ -32,5 +32,10 @@ def wireguard(ctx):
 
 
 @task
+def kube(ctx):
+    ctx.run(cmd + 'inventory.py kube.py --limit dash --limit garage', pty=True)
+
+
+@task
 def get_fact(ctx, host='dash', fact='server.LinuxDistribution'):
-    ctx.run(cmd + f'{host} fact {fact}', pty=True)
+    ctx.run(cmd + f'{host} -vv fact {fact}', pty=True)
