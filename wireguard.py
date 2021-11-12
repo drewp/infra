@@ -46,7 +46,7 @@ for wireguard_interface in ['wg0', 'bogasterisk']:
     # todo: if this was new, it should be added to a file of pubkeys that peer_block can refer to
 
     files.template(
-        src=f'templates/wireguard_{wireguard_interface}.conf.j2',
+        src=f'templates/wireguard/{wireguard_interface}.conf.j2',
         dest=f'/etc/wireguard/{wireguard_interface}.conf',
         mode='600',
         wireguard_ip=wireguard_ip,

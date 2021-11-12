@@ -1,0 +1,5 @@
+# written by pyinfra
+
+# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+/dev/disk/by-uuid/8c7a2d08-60d1-486a-8136-d9f43d83a064 / ext4 relatime 0 0
+/dev/disk/by-uuid/d9a1e1e4-9eba-4988-8b01-c5f6732a2972 /d3 ext4 relatime 0 0

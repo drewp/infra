@@ -9,7 +9,7 @@ is_wifi = host.name in ['frontdoor', 'living', 'plus']
 ssh_host = host.host_data.get('ssh_hostname', host.name)
 
 if is_wifi:
-    files.put(src="files/wpa_supplicant.conf", dest="/etc/wpa_supplicant/wpa_supplicant.conf")
+    files.put(src="secrets/wpa_supplicant.conf", dest="/etc/wpa_supplicant/wpa_supplicant.conf")
 
 files.template(src='templates/hosts.j2', dest='/etc/hosts')
 
@@ -30,14 +30,14 @@ elif host.name in ['dash', 'slash']:
     ns = '10.1.0.1'
 files.template(src='templates/resolv.conf.j2', dest='/etc/resolv.conf', ns=ns)
 
-if host.name in ['dash', 'slash', 'garage']:
+if host.name in ['dash', 'slash', 'garage', 'frontbed']:
     # might need to upgrade pi systemd if there are errors in this part
     apt.packages(packages=['netplan.io'])
     files.file(path='/etc/netplan/00-installer-config.yaml', present=False)
     addrs = host.get_fact(Ipv4Addrs)
     ipv4Interface = host.host_data['interface']
     ipv4Address = host.host_data['addr']
-    files.template(src='templates/netplan_dns.yaml.j2',
+    files.template(src='templates/netplan.yaml.j2',
                    dest='/etc/netplan/99-ansible-written.yaml',
                    ipv4Interface=ipv4Interface,
                    ipv4Address=ipv4Address)
@@ -64,11 +64,13 @@ if host.name == 'bang':
 
     for net_name in ['10.1', '10.2', '10.5']:
         files.directory(path=f'/opt/dnsmasq/{net_name}')
-        files.template(src='templates/dnsmasq.conf.j2', dest=f'/opt/dnsmasq/{net_name}/dnsmasq.conf', net=net_name)
-        files.template(src='templates/dhcp_hosts_file.j2', dest=f'/opt/dnsmasq/{net_name}/hosts', net=net_name)
-        files.template(src='templates/dhcp_hosts.j2', dest=f'/opt/dnsmasq/{net_name}/dhcp_hosts', net=net_name)
+        files.template(src='templates/dnsmasq/dnsmasq.conf.j2', dest=f'/opt/dnsmasq/{net_name}/dnsmasq.conf', net=net_name)
+        files.template(src='templates/dnsmasq/hosts.j2', dest=f'/opt/dnsmasq/{net_name}/hosts', net=net_name)
+        files.template(src='templates/dnsmasq/dhcp_hosts.j2', dest=f'/opt/dnsmasq/{net_name}/dhcp_hosts', net=net_name)
 
-        files.template(src='templates/dnsmasq.service.j2', dest=f'/etc/systemd/system/dnsmasq_{net_name}.service', net=net_name)
+        files.template(src='templates/dnsmasq/dnsmasq.service.j2',
+                       dest=f'/etc/systemd/system/dnsmasq_{net_name}.service',
+                       net=net_name)
         systemd.service(service=f'dnsmasq_{net_name}', restarted=True, daemon_reload=True)
 
 if host.name == 'prime':

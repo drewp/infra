@@ -14,16 +14,26 @@ def users(ctx):
 
 
 @task
+def ssh(ctx):
+    ctx.run(cmd + 'inventory.py ssh.py', pty=True)
+
+
+@task
 def system(ctx):
     ctx.run(cmd + 'inventory.py system.py', pty=True)
 
 
 @task
+def packages(ctx):
+    ctx.run(cmd + 'inventory.py packages.py', pty=True)
+
+
+@task
 def net(ctx):
     # workaround for https://github.com/Fizzadar/pyinfra/issues/702
-    ctx.run(cmd + '-vv inventory.py exec -- rm -f /tmp/pyinfra-7ed098bf43cef74d8ab8ea095e4a95c92605c61c', pty=True)
+    ctx.run(cmd + 'inventory.py exec -- rm -f /tmp/pyinfra-7ed098bf43cef74d8ab8ea095e4a95c92605c61c', pty=True, warn=True)
 
-    ctx.run(cmd + '-vv inventory.py net.py --limit slash ', pty=True)
+    ctx.run(cmd + 'inventory.py net.py', pty=True)
 
 
 @task
@@ -33,7 +43,8 @@ def wireguard(ctx):
 
 @task
 def kube(ctx):
-    ctx.run(cmd + 'inventory.py kube.py --limit dash --limit garage', pty=True)
+    ctx.run(cmd + 'inventory.py kube.py ', pty=True)
+
 
 
 @task

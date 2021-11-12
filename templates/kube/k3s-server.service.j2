@@ -1,3 +1,5 @@
+# written by pyinfra
+
 [Unit]
 Description=Lightweight Kubernetes
 Documentation=https://k3s.io
@@ -7,7 +9,7 @@ After=network-online.target
 Type=notify
 ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
-ExecStart=/usr/local/bin/k3s agent --server https://{{ master_ip }}:6443 --token {{ token }}
+ExecStart=/usr/local/bin/k3s server --debug --write-kubeconfig-mode=640 --bind-address {{ master_ip }} --node-external-ip {{ master_ip }} --node-ip {{ master_ip }} --disable traefik
 KillMode=process
 Delegate=yes
 # Having non-zero Limit*s causes performance problems due to accounting overhead

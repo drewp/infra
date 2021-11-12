@@ -1,3 +1,5 @@
+# written by pyinfra
+
 auto wlan0
 iface wlan0 inet dhcp
   post-up iw wlan0 set power_save off
