@@ -1,0 +1,85 @@
+# written by pyinfra
+
+smtpd_banner = $myhostname ESMTP $mail_name (Ubuntu)
+biff = no
+
+# appending .domain is the MUA's job.
+append_dot_mydomain = no
+
+# Uncomment the next line to generate "delayed mail" warnings
+#delay_warning_time = 4h
+
+readme_directory = /usr/share/doc/postfix
+
+# TLS parameters
+smtpd_tls_cert_file=/etc/ssl/certs/self1-ca.crt
+smtpd_tls_key_file=/etc/ssl/certs/self1-ca.key
+smtpd_use_tls=yes
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+smtpd_tls_loglevel = 0
+smtpd_tls_security_level = may
+smtpd_tls_received_header = yes
+   
+# See /usr/share/doc/postfix/TLS_README.gz in the postfix-doc package for
+# information on enabling SSL in the smtp client.
+
+myhostname = bigasterisk.com
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+myorigin = bigasterisk.com
+mydestination = /etc/postfix/mydestination
+relayhost = 
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 10.1.0.0/16 10.3.0.0/16 10.5.0.0/24 192.168.0.3/32 [fc7b:54e8:69a9:e165:86c8:9d42:6cc5:b2a1]/128 [fcc8:29d:5660:ec63:754f:37af:de4a:a9df]/128
+#mailbox_command = procmail -a "$EXTENSION"
+mailbox_size_limit = 0
+recipient_delimiter = +
+inet_interfaces = all
+html_directory = /usr/share/doc/postfix/html
+
+home_mailbox = Maildir/
+
+# http://www.postfix.org/LOCAL_RECIPIENT_README.html
+#local_recipient_maps = /etc/postfix/local_recipient
+
+# http://www.spamcop.net/fom-serve/cache/349.html
+# upgraded, per http://www.wrightthisway.com/Articles/000062.html
+
+smtpd_recipient_restrictions =
+    permit_mynetworks, 
+    permit_sasl_authenticated,
+#    check_client_access  /etc/passwd somehow?
+    reject_invalid_hostname, 
+    reject_non_fqdn_sender, 
+    reject_non_fqdn_recipient, 
+    reject_unknown_sender_domain, 
+    reject_unknown_recipient_domain, 
+    reject_unauth_pipelining, 
+    permit_tls_clientcerts,
+    reject_unauth_destination, 
+    check_sender_access hash:/etc/postfix/sender_access,
+    reject_rbl_client bl.spamcop.net,
+    permit
+
+
+# no dovecot
+smtpd_sasl_type = cyrus
+cyrus_sasl_config_path = /etc/postfix/sasl/
+
+# yes dovecot
+#smtpd_sasl_type = dovecot
+#smtpd_sasl_path = private/auth
+
+smtpd_sasl_auth_enable = yes
+smtpd_sasl_security_options = noanonymous
+smtpd_sasl_tls_security_options = $smtpd_sasl_security_options
+smtpd_tls_auth_only = yes
+
+queue_directory = /var/spool/postfix
+
+virtual_alias_domains = adkinslawgroup.com iveseenyoubefore.com fantasyfamegame.com maxradi.us whopickedthis.com quickwitretort.com drewp.quickwitretort.com kelsi.quickwitretort.com photo.bigasterisk.com whatsplayingnext.com williamperttula.com        
+
+virtual_alias_maps = hash:/etc/postfix/virtual
+
+message_size_limit = 50000000
+

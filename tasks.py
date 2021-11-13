@@ -52,5 +52,10 @@ def sync(ctx):
 
 
 @task
+def mail(ctx):
+    ctx.run(cmd + 'inventory.py mail.py -vv', pty=True)
+
+
+@task
 def get_fact(ctx, host='dash', fact='server.LinuxDistribution'):
     ctx.run(cmd + f'{host} -vv fact {fact}', pty=True)
