@@ -46,6 +46,10 @@ def kube(ctx):
     ctx.run(cmd + 'inventory.py kube.py ', pty=True)
 
 
+@task
+def sync(ctx):
+    ctx.run(cmd + 'inventory.py sync.py ', pty=True)
+
 
 @task
 def get_fact(ctx, host='dash', fact='server.LinuxDistribution'):
