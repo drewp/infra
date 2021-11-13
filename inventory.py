@@ -18,7 +18,7 @@ big = [
         'wireguard_address': '10.5.0.6',
     }),
     ('dot', {
-        'ssh_hostname': '10.2.0.49',
+        'ssh_hostname': '10.2.0.57',
         'interface': 'enp3s0',
         'addr': '10.2.0.30',
         'wireguard_address': '10.5.0.30',

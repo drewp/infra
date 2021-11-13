@@ -73,3 +73,9 @@ if host.name in ['bang', 'slash', 'dash']:  # hosts to admin from
 
     files.chown(target='/etc/rancher/k3s/k3s.yaml', user='root', group='drewp')
     files.chmod(target='/etc/rancher/k3s/k3s.yaml', mode='640')
+
+    files.download(src='https://storage.googleapis.com/skaffold/releases/v1.34.0/skaffold-linux-amd64',
+                   dest='/usr/local/bin/skaffold',
+                   user='root',
+                   group='root',
+                   mode='755')

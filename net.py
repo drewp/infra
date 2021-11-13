@@ -3,10 +3,8 @@ from pyinfra.facts.hardware import Ipv4Addrs
 from pyinfra.facts.server import LinuxDistribution
 from pyinfra.operations import apt, files, server, systemd
 
-bang_is_old = True
 is_pi = host.get_fact(LinuxDistribution)['name'] in ['Debian', 'Raspbian GNU/Linux']
 is_wifi = host.name in ['frontdoor', 'living', 'plus']
-ssh_host = host.host_data.get('ssh_hostname', host.name)
 
 if is_wifi:
     # todo: netplan could do this, below
