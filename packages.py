@@ -2,7 +2,6 @@ from pyinfra import host
 from pyinfra.facts.server import LinuxDistribution
 from pyinfra.operations import apt, files, ssh
 
-bang_is_old = True  # remove after upgrade
 is_pi = host.get_fact(LinuxDistribution)['name'] in ['Debian', 'Raspbian GNU/Linux']
 is_wifi_pi = host.name in ['frontdoor', 'living']
 
@@ -18,6 +17,8 @@ if is_pi:
     apt.key(src='https://ftp-master.debian.org/keys/archive-key-8.asc')
     apt.key(src='https://ftp-master.debian.org/keys/archive-key-8-security.asc')
     apt.key(src='https://ftp-master.debian.org/keys/archive-key-9-security.asc')
+    apt.key(keyserver='keyserver.ubuntu.com', keyid='04EE7237B7D453EC')
+    apt.key(keyserver='keyserver.ubuntu.com', keyid='648ACFD622F3D138')
 
     files.file(path='/etc/apt/sources.list.d/raspi.list', present=False)
 
@@ -57,13 +58,12 @@ if not is_pi:
         'sysstat',
     ])
 
-if not is_pi and not bang_is_old:
+if not is_pi and not (host.name == 'prime'):
     apt.packages(packages='mlocate', present=False)
     apt.packages(packages='plocate')
 
 if host.name == "bang":
     apt.packages(packages=[
-        'libzfs2linux',
         'zfsutils-linux',
         'zfs-zed',
         'zfs-auto-snapshot',
