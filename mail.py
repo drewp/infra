@@ -8,7 +8,11 @@ if host.name == 'prime':
     files.put(src='secrets/mail/sender_access', dest='/etc/postfix/sender_access')
     files.put(src='secrets/mail/virtual', dest='/etc/postfix/virtual')
 
-    server.shell(commands=['postfix reload'])
+    server.shell(commands=[
+        'postmap /etc/postfix/sender_access',
+        'postmap /etc/postfix/virtual',
+        'postfix reload',
+    ])
     systemd.service(service='postfix.service', enabled=True, running=True)
     # maybe needs 'postfix@-.service', unclear
 

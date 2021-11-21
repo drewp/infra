@@ -1,5 +1,7 @@
 # written by pyinfra
 
+compatibility_level = 3
+
 smtpd_banner = $myhostname ESMTP $mail_name (Ubuntu)
 biff = no
 
@@ -29,7 +31,9 @@ alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
 myorigin = bigasterisk.com
 mydestination = /etc/postfix/mydestination
+relay_domains = $mydestination
 relayhost = 
+mynetworks_style = subnet
 mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 10.1.0.0/16 10.3.0.0/16 10.5.0.0/24 192.168.0.3/32 [fc7b:54e8:69a9:e165:86c8:9d42:6cc5:b2a1]/128 [fcc8:29d:5660:ec63:754f:37af:de4a:a9df]/128
 #mailbox_command = procmail -a "$EXTENSION"
 mailbox_size_limit = 0
@@ -60,7 +64,8 @@ smtpd_recipient_restrictions =
     check_sender_access hash:/etc/postfix/sender_access,
     reject_rbl_client bl.spamcop.net,
     permit
-
+    
+smtpd_tls_ask_ccert = yes
 
 # no dovecot
 smtpd_sasl_type = cyrus
