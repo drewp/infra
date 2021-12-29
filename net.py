@@ -1,53 +1,66 @@
 from pyinfra import host
-from pyinfra.facts.hardware import Ipv4Addrs
-from pyinfra.facts.server import LinuxDistribution
 from pyinfra.operations import apt, files, server, systemd
 
-is_pi = host.get_fact(LinuxDistribution)['name'] in ['Debian', 'Raspbian GNU/Linux']
 is_wifi = host.name in ['frontdoor', 'living', 'plus']
 
-if is_wifi:
-    # todo: netplan could do this, below
-    files.put(src="secrets/wpa_supplicant.conf", dest="/etc/wpa_supplicant/wpa_supplicant.conf")
+if host.name in [
+        'garage',
+        'dash',
+        'slash',
+        'frontbed',
+        'prime',
+]:
+    # previous version
+    files.file(path='/etc/netplan/99-pyinfra-written.yaml', present=False)
 
-files.template(src='templates/hosts.j2', dest='/etc/hosts')
+    for search_dir in [
+            # search path per `man systemd.network`:
+            # /lib/systemd/network              # These OS files are ok.
+            '/usr/local/lib/systemd/network/',  # Probably no such dir.
+            '/run/systemd/network/',  # Previous netplan attempts dumped in here.
+            '/etc/systemd/network/',  # I'm going to work in here.
+    ]:
+        files.sync(
+            src="files/empty_dir/",
+            dest=search_dir,
+            delete=True,
+        )
 
-if host.name == 'prime':
-    # prime should have gotten this through netplan, but i give up.
-    #
-    # Note the DNS list: this list is tried randomly, not in order, so we could have
-    # some trouble with internal names
-    files.template(src='templates/prime_resolved.conf.j2', dest='/etc/systemd/resolved.conf')
-else:
+    addr = host.host_data['addr']
+    if addr.startswith('10.'):
+        net = addr[:4]
+        gateway = net + '.0.1'
+        dns = gateway
+    elif addr == '162.243.138.136':
+        gateway = '162.243.138.1'
+        dns = '10.5.0.1 8.8.8.8 8.8.4.4'
+    else:
+        raise ValueError(addr)
+    files.template(src="templates/house.network.j2",
+                   dest="/etc/systemd/network/99-house.network",
+                   mac=host.host_data['mac'],
+                   addr=addr,
+                   gateway=gateway,
+                   dns=dns)
+    systemd.service(service='systemd-networkd.service', running=True, restarted=True)
+
+    # you may have to rm this file first: https://github.com/Fizzadar/pyinfra/issues/719
+    files.link(path='/etc/resolv.conf', target='/run/systemd/resolve/resolv.conf', force=True)
     files.template(src='templates/resolved.conf.j2', dest='/etc/systemd/resolved.conf')
-systemd.service(service='systemd-resolved.service', running=True, restarted=True)
 
-ns = '10.2.0.1'
-if host.name == 'prime':
-    ns = '8.8.8.8'
-elif host.name in ['dash', 'slash']:
-    ns = '10.1.0.1'
-files.template(src='templates/resolv.conf.j2', dest='/etc/resolv.conf', ns=ns)
+    if is_wifi:
+        files.put(src="secrets/wpa_supplicant.conf", dest="/etc/wpa_supplicant/wpa_supplicant.conf")
 
-if host.name in ['dash', 'slash', 'garage', 'frontbed', 'dot']:
-    # might need to upgrade pi systemd if there are errors in this part
-    apt.packages(packages=['netplan.io'])
-    for bad in [
-            '01-netcfg.yaml',
-            '01-network-manager-all.yaml',
-            '00-installer-config.yaml',
-            '99-ansible-written.yaml',
-            '99-dns.conf',
-            ]:
-        files.file(path=f'/etc/netplan/{bad}', present=False)
-    addrs = host.get_fact(Ipv4Addrs)
-    ipv4Interface = host.host_data['interface']
-    ipv4Address = host.host_data['addr']
-    files.template(src='templates/netplan.yaml.j2',
-                   dest='/etc/netplan/99-pyinfra-written.yaml',
-                   ipv4Interface=ipv4Interface,
-                   ipv4Address=ipv4Address)
-    server.shell(commands=['netplan apply'])
+    files.template(src='templates/hosts.j2', dest='/etc/hosts')
+
+    systemd.service(service='systemd-resolved.service', running=True, restarted=True)
+
+    # ns = '10.2.0.1'
+    # if host.name == 'prime':
+    #     ns = '8.8.8.8'
+    # elif host.name in ['slash']:
+    #     ns = '10.1.0.1'
+    # files.template(src='templates/resolv.conf.j2', dest='/etc/resolv.conf', ns=ns)
 
 apt.packages(packages=['network-manager'], present=host.name in ['plus'])
 

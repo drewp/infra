@@ -2,6 +2,14 @@
 
 # See resolved.conf(5) for details
 
+{% if host.name == 'prime' %}
+[Resolve]
+# This list is tried randomly, not in order, so we could have
+# some trouble with internal names
+DNS=10.5.0.1 8.8.8.8 8.8.4.4
+Domains=bigasterisk.com
+
+{% else %}
 [Resolve]
 DNS=10.2.0.1
 #FallbackDNS=
@@ -13,3 +21,4 @@ Domains=bigasterisk.com
 #Cache=yes
 #DNSStubListener=yes
 #ReadEtcHosts=yes
+{% endif %}
