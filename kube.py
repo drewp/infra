@@ -7,7 +7,7 @@ bang_is_old = True  # remove after upgrade
 is_pi = host.get_fact(LinuxDistribution)['name'] in ['Debian', 'Raspbian GNU/Linux']
 is_wifi_pi = host.name in ['frontdoor', 'living']
 
-k3s_version = 'v1.21.2+k3s1'
+k3s_version = 'v1.22.4-rc1+k3s1'
 master_ip = "10.5.0.1"
 
 server.sysctl(key='net.ipv4.ip_forward', value="1", persist=True)
@@ -18,7 +18,8 @@ files.download(src=f'https://github.com/rancher/k3s/releases/download/{k3s_versi
                dest='/usr/local/bin/k3s',
                user='root',
                group='root',
-               mode='755')
+               mode='755',
+               cache_time=1000)
 
 if is_pi:
     old_cmdline = host.get_fact(FindInFile, path='/boot/cmdline.txt', pattern=r'.*')[0]
@@ -40,12 +41,24 @@ files.template(src='templates/kube/registries.yaml.j2', dest='/etc/rancher/k3s/r
 
 if host.name == 'bang':  # master
     files.template(
+        src='templates/kube/config.yaml.j2',
+        dest='/etc/k3s_config.yaml',
+        master_ip=master_ip,
+    )
+    files.template(
+        src='templates/kube/Corefile.j2',
+        dest='/etc/k3s_coredns_config',
+    )
+    files.template(
         src='templates/kube/k3s-server.service.j2',
         dest='/etc/systemd/system/k3s.service',
         master_ip=master_ip,
     )
     systemd.service(service='k3s.service', daemon_reload=True, enabled=True, restarted=True)
 
+    server.shell(commands=[
+        'kubectl replace configmap -n kube-system coredns --from-file=Corefile=/etc/k3s_coredns_config -o yaml --dry-run=client | kubectl apply -',
+        ])
     # one-time thing at cluster create time? not sure
     # - name: Replace https://localhost:6443 by https://master-ip:6443
     #   command: >-
@@ -74,9 +87,9 @@ if host.name in ['bang', 'slash', 'dash']:  # hosts to admin from
     files.chown(target='/etc/rancher/k3s/k3s.yaml', user='root', group='drewp')
     files.chmod(target='/etc/rancher/k3s/k3s.yaml', mode='640')
 
-    # bug: doesn't update old versions since the file exists
-    files.download(src='https://storage.googleapis.com/skaffold/releases/v1.34.0/skaffold-linux-amd64',
+    files.download(src='https://storage.googleapis.com/skaffold/releases/v1.35.0/skaffold-linux-amd64',
                    dest='/usr/local/bin/skaffold',
                    user='root',
                    group='root',
-                   mode='755')
+                   mode='755',
+                   cache_time=1000)
