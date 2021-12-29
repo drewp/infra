@@ -46,6 +46,8 @@ apt.packages(packages=[
     'rsync',
     'dstat',
     'ifstat',
+    'mosquitto-clients',
+    'ncdu',
 ])
 
 if not is_pi:
@@ -56,6 +58,7 @@ if not is_pi:
         'python3-pip',
         'python3-virtualenv',
         'sysstat',
+        'debian-goodies',
     ])
 
 if not is_pi and not (host.name == 'prime'):
