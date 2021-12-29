@@ -19,7 +19,11 @@ ListenPort = 1195
     {{ peer_block('drew-note10', 'QMgx4cmuUTfJ7RH4Q46b54tSQl4eISOmdEney17fnE8=', '10.5.0.112/32') }}
 {% elif host.name == 'plus' %}
     {{ peer_block('bang',        'pAxirNVF08R6zYyudhTKjZ9fqC9UKMxknfLi5A39QVY=', '10.5.0.0/24', '10.1.0.1:1195', 50) }}
-{% else %}
+{% elif host.name in ['dash', 'slash'] %}
+    # I see bang at 10.1.0.1
     {{ peer_block('bang',        'pAxirNVF08R6zYyudhTKjZ9fqC9UKMxknfLi5A39QVY=', '10.5.0.0/24', '10.1.0.1:1195', 50) }}
+{% else %}
+    # I see bang at 10.2.0.1
+    {{ peer_block('bang',        'pAxirNVF08R6zYyudhTKjZ9fqC9UKMxknfLi5A39QVY=', '10.5.0.0/24', '10.2.0.1:1195', 50) }}
 {% endif %}
 
