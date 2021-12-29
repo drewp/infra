@@ -30,10 +30,7 @@ def packages(ctx):
 
 @task
 def net(ctx):
-    # workaround for https://github.com/Fizzadar/pyinfra/issues/702
-    ctx.run(cmd + 'inventory.py exec -- rm -f /tmp/pyinfra-7ed098bf43cef74d8ab8ea095e4a95c92605c61c', pty=True, warn=True)
-
-    ctx.run(cmd + 'inventory.py net.py', pty=True)
+    ctx.run(cmd + 'inventory.py net.py -v --limit prime', pty=True)
 
 
 @task
