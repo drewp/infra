@@ -3,41 +3,46 @@ from pyinfra.facts.files import FindInFile
 from pyinfra.facts.server import Arch, LinuxDistribution
 from pyinfra.operations import files, server, systemd
 
-bang_is_old = True  # remove after upgrade
 is_pi = host.get_fact(LinuxDistribution)['name'] in ['Debian', 'Raspbian GNU/Linux']
-is_wifi_pi = host.name in ['frontdoor', 'living']
 
 k3s_version = 'v1.22.4-rc1+k3s1'
 master_ip = "10.5.0.1"
+server_node = 'bang'
+nodes = ['slash', 'dash', 'frontbed', 'garage']
+admin_from = ['bang', 'slash', 'dash']
 
-server.sysctl(key='net.ipv4.ip_forward', value="1", persist=True)
-server.sysctl(key='net.ipv6.conf.all.forwarding', value="1", persist=True)
+if host.name in [nodes + [server_node]]:
+    server.sysctl(key='net.ipv4.ip_forward', value="1", persist=True)
+    server.sysctl(key='net.ipv6.conf.all.forwarding', value="1", persist=True)
 
-tail = 'k3s' if host.get_fact(Arch) == 'x86_64' else 'k3s-armhf'
-files.download(src=f'https://github.com/rancher/k3s/releases/download/{k3s_version}/{tail}',
-               dest='/usr/local/bin/k3s',
-               user='root',
-               group='root',
-               mode='755',
-               cache_time=1000)
+    tail = 'k3s' if host.get_fact(Arch) == 'x86_64' else 'k3s-armhf'
+    files.download(
+        src=f'https://github.com/rancher/k3s/releases/download/{k3s_version}/{tail}',
+        dest='/usr/local/bin/k3s',
+        user='root',
+        group='root',
+        mode='755',
+        cache_time=43000,
+       # force=True,  # to get a new version
+    )
 
-if is_pi:
-    old_cmdline = host.get_fact(FindInFile, path='/boot/cmdline.txt', pattern=r'.*')[0]
-    print(repr(old_cmdline))
-    if 'cgroup' not in old_cmdline:
-        cmdline = old_cmdline + ' cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory'
-        files.line(path='/boot/cmdline.txt', line='.*', replace=cmdline)
-        # pi needs reboot now
+    if is_pi:
+        old_cmdline = host.get_fact(FindInFile, path='/boot/cmdline.txt', pattern=r'.*')[0]
+        print(repr(old_cmdline))
+        if 'cgroup' not in old_cmdline:
+            cmdline = old_cmdline + ' cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory'
+            files.line(path='/boot/cmdline.txt', line='.*', replace=cmdline)
+            # pi needs reboot now
 
-    server.shell(commands=[
-        'update-alternatives --set iptables /usr/sbin/iptables-legacy',
-        'update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy',
-    ])
-    # needs reboot if this changed
+        server.shell(commands=[
+            'update-alternatives --set iptables /usr/sbin/iptables-nft',
+            'update-alternatives --set ip6tables /usr/sbin/ip6tables-nft',
+        ])
+        # needs reboot if this changed
 
-# See https://github.com/rancher/k3s/issues/1802 and https://rancher.com/docs/k3s/latest/en/installation/private-registry/
-files.directory(path='/etc/rancher/k3s')
-files.template(src='templates/kube/registries.yaml.j2', dest='/etc/rancher/k3s/registries.yaml')
+    # See https://github.com/rancher/k3s/issues/1802 and https://rancher.com/docs/k3s/latest/en/installation/private-registry/
+    files.directory(path='/etc/rancher/k3s')
+    files.template(src='templates/kube/registries.yaml.j2', dest='/etc/rancher/k3s/registries.yaml')
 
 if host.name == 'bang':  # master
     files.template(
@@ -78,8 +83,27 @@ if host.name in ['slash', 'dash', 'frontbed', 'garage']:  # nodes
     )
 
     systemd.service(service='k3s-node.service', daemon_reload=True, enabled=True, restarted=True)
+# if bang:
+# files.template(
+#     src='templates/kube/Corefile.j2',
+#     dest='/etc/k3s_coredns_config',
+# )
+# server.shell(commands=[
+#     'kubectl replace configmap '
+#     '-n kube-system '
+#     'coredns '
+#     '--from-file=Corefile=/etc/k3s_coredns_config '
+#     '-o yaml '
+#     '--dry-run=client | kubectl apply -',
+# ])
+# one-time thing at cluster create time? not sure
+# - name: Replace https://localhost:6443 by https://master-ip:6443
+#   command: >-
+#     k3s kubectl config set-cluster default
+#       --server=https://{{ master_ip }}:6443
+#       --kubeconfig ~{{ ansible_user }}/.kube/config
 
-if host.name in ['bang', 'slash', 'dash']:  # hosts to admin from
+if host.name in admin_from:
     files.link(path='/usr/local/bin/kubectl', target='/usr/local/bin/k3s')
     files.directory(path='/home/drewp/.kube', user='drewp', group='drewp')
     files.line(path="/home/drewp/.zshrc", line="KUBECONFIG", replace='export KUBECONFIG=/etc/rancher/k3s/k3s.yaml')
