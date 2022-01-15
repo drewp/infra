@@ -44,45 +44,26 @@ if host.name in [nodes + [server_node]]:
     files.directory(path='/etc/rancher/k3s')
     files.template(src='templates/kube/registries.yaml.j2', dest='/etc/rancher/k3s/registries.yaml')
 
-if host.name == 'bang':  # master
-    files.template(
-        src='templates/kube/config.yaml.j2',
-        dest='/etc/k3s_config.yaml',
-        master_ip=master_ip,
-    )
-    files.template(
-        src='templates/kube/Corefile.j2',
-        dest='/etc/k3s_coredns_config',
-    )
-    files.template(
-        src='templates/kube/k3s-server.service.j2',
-        dest='/etc/systemd/system/k3s.service',
-        master_ip=master_ip,
-    )
-    systemd.service(service='k3s.service', daemon_reload=True, enabled=True, restarted=True)
+    service_name = 'k3s.service' if host.name == 'bang' else 'k3s-node.service'
+    which_conf = 'config.yaml.j2' if host.name == 'bang' else 'node-config.yaml.j2'
 
-    server.shell(commands=[
-        'kubectl replace configmap -n kube-system coredns --from-file=Corefile=/etc/k3s_coredns_config -o yaml --dry-run=client | kubectl apply -',
-        ])
-    # one-time thing at cluster create time? not sure
-    # - name: Replace https://localhost:6443 by https://master-ip:6443
-    #   command: >-
-    #     k3s kubectl config set-cluster default
-    #       --server=https://{{ master_ip }}:6443
-    #       --kubeconfig ~{{ ansible_user }}/.kube/config
-
-if host.name in ['slash', 'dash', 'frontbed', 'garage']:  # nodes
     # /var/lib/rancher/k3s/server/node-token is the source of the string in secrets/k3s_token
     token = open('secrets/k3s_token', 'rt').read().strip()
-
     files.template(
-        src='templates/kube/k3s-node.service.j2',
-        dest='/etc/systemd/system/k3s-node.service',
+        src=f'templates/kube/{which_conf}',
+        dest='/etc/k3s_config.yaml',
         master_ip=master_ip,
         token=token,
+        wg_ip=host.host_data['wireguard_address'],
     )
 
-    systemd.service(service='k3s-node.service', daemon_reload=True, enabled=True, restarted=True)
+    files.template(
+        src='templates/kube/k3s.service.j2',
+        dest=f'/etc/systemd/system/{service_name}',
+        role='server' if host.name == 'bang' else 'agent',
+    )
+    systemd.service(service=service_name, daemon_reload=True, enabled=True, restarted=True)
+
 # if bang:
 # files.template(
 #     src='templates/kube/Corefile.j2',
