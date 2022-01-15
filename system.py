@@ -58,3 +58,10 @@ if not is_pi:
 
     files.line(path='/etc/ssh/sshd_config', line="^UseDNS\b", replace="UseDNS no")
     systemd.service(service='sshd', reloaded=True)
+
+
+if host.name == 'bang':
+    server.shell(commands=['systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target'])
+
+    apt.packages(packages=['nfs-kernel-server'])
+    files.template(src='templates/bang_exports.j2', dest='/etc/exports')

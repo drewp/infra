@@ -34,6 +34,11 @@ def net(ctx):
 
 
 @task
+def dns(ctx):
+    ctx.run(cmd + 'inventory.py dns.py -v', pty=True)
+
+
+@task
 def wireguard(ctx):
     ctx.run(cmd + 'inventory.py wireguard.py', pty=True)
 

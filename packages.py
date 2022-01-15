@@ -68,6 +68,9 @@ if not is_pi and not (host.name == 'prime'):
 
 if host.name == "bang":
     apt.packages(packages=[
+        'iptables',
+        'openntpd',
+        'ntpdate',
         'zfsutils-linux',
         'zfs-zed',
         'zfs-auto-snapshot',
