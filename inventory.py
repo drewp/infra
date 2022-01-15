@@ -19,7 +19,7 @@ big = [
     }),
     ('dot', {
         'interface': 'enp3s0',
-        'ssh_hostname': '10.2.0.69',
+        'ssh_hostname': '10.2.0.25',
         'addr': '10.2.0.30',
         'wireguard_address': '10.5.0.30',
     })
