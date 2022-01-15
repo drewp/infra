@@ -1,2 +1,2 @@
-pyinfra==1.4.18
+pyinfra==1.6.1
 yapf==0.31.0
