@@ -59,6 +59,7 @@ if not is_pi:
         'python3-virtualenv',
         'sysstat',
         'debian-goodies',
+        'lxterminal',
     ])
 
 if not is_pi and not (host.name == 'prime'):
