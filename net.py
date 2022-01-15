@@ -51,6 +51,7 @@ if host.name in [
 
     files.template(src="templates/house.network.j2",
                    dest="/etc/systemd/network/99-house.network",
+                   create_remote_dir=True,
                    mac=host.host_data['mac'],
                    addr=addr,
                    gateway=gateway,

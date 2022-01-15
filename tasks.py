@@ -30,7 +30,7 @@ def packages(ctx):
 
 @task
 def net(ctx):
-    ctx.run(cmd + 'inventory.py net.py -v --limit prime', pty=True)
+    ctx.run(cmd + 'inventory.py net.py -v --limit garage', pty=True)
 
 
 @task
