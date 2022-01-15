@@ -2,15 +2,12 @@ from pyinfra import host
 from pyinfra.operations import apt, files, server, systemd
 
 is_wifi = host.name in ['frontdoor', 'living', 'plus']
+prime_public_addr = '162.243.138.136'
+prime_gateway = '162.243.138.1'
 
-if host.name in [
-        'garage',
-        'dash',
-        'slash',
-        'frontbed',
-        'prime',
-]:
-    # previous version
+
+def cleanup():
+    # past attempts
     files.file(path='/etc/netplan/99-pyinfra-written.yaml', present=False)
 
     for search_dir in [
@@ -26,13 +23,25 @@ if host.name in [
             delete=True,
         )
 
+    apt.packages(packages=['network-manager'], present=False)
+
+
+if host.name in [
+        'garage',
+        'dash',
+        'slash',
+        'frontbed',
+        'prime',
+]:
+    cleanup()
+
     addr = host.host_data['addr']
     if addr.startswith('10.'):
         net = addr[:4]
         gateway = net + '.0.1'
         dns = gateway
-    elif addr == '162.243.138.136':
-        gateway = '162.243.138.1'
+    elif addr == prime_public_addr:
+        gateway = prime_gateway
         dns = '10.5.0.1 8.8.8.8 8.8.4.4'
     else:
         raise ValueError(addr)
