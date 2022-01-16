@@ -46,7 +46,7 @@ dhcp-option=option:domain-name,bigasterisk.com
 dhcp-hostsfile=/opt/dnsmasq/{{ net }}/dhcp_hosts
 dhcp-leasefile=/opt/dnsmasq/{{ net }}/leases
 dhcp-range=ens5,10.2.0.0,static,infinite
-dhcp-range=tag:!known,ens5,10.2.0.21,10.2.0.120,24h
+dhcp-range=tag:!known,ens5,10.2.0.125,10.2.0.200,24h
 dhcp-option=ens5,option:dns-server,10.2.0.1
 dhcp-option=ens5,option:router,10.2.0.1
 {% endif %}
