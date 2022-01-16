@@ -75,3 +75,6 @@ if host.name == "bang":
         'zfs-zed',
         'zfs-auto-snapshot',
     ])
+
+if host.name == 'plus':
+    apt.packages(packages=['network-manager'])

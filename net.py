@@ -2,8 +2,6 @@ from pyinfra import host
 from pyinfra.operations import apt, files, server, systemd
 
 is_wifi = host.name in ['frontdoor', 'living', 'plus']
-prime_public_addr = '162.243.138.136'
-prime_gateway = '162.243.138.1'
 
 
 def cleanup():
@@ -25,67 +23,54 @@ def cleanup():
 
     apt.packages(packages=['network-manager'], present=False)
 
+    # On bang:
+    #   Now using a HW router for this firewall. No incoming connections.
+    #   test connections from the outside:
+    #   http://www.t1shopper.com/tools/port-scanner/
+    # On prime:
+    #   using digitalocean network config:
+    #   https://cloud.digitalocean.com/networking/firewalls/f68899ae-1aac-4469-b379-59ce2bbc988f/droplets?i=7c5072
+    apt.packages(packages=['ufw'], present=False)
 
-if host.name in [
-        'garage',
-        'dash',
-        'slash',
-        'frontbed',
-        'prime',
-]:
+
+if host.name == 'prime':
     cleanup()
 
-    addr = host.host_data['addr']
-    if addr.startswith('10.'):
-        net = addr[:4]
-        gateway = net + '.0.1'
-        dns = gateway
-    elif addr == prime_public_addr:
-        gateway = prime_gateway
-        dns = '10.5.0.1 8.8.8.8 8.8.4.4'
-    else:
-        raise ValueError(addr)
+    files.directory('/etc/systemd/network')
+    files.template(
+        src="templates/net/prime.network.j2",
+        dest="/etc/systemd/network/99-prime.network",
+        mac=host.host_data['mac'],
+    )
+
+elif host.name == 'bang':
+    cleanup()
+
+    files.directory('/etc/systemd/network')
+    files.template(src="templates/net/bang_10.1.network.j2", dest="/etc/systemd/network/99-10.1.network")
+    files.template(src="templates/net/bang_10.2.network.j2", dest="/etc/systemd/network/99-10.2.network")
+    files.template(src="templates/net/bang_isp.network.j2", dest="/etc/systemd/network/99-isp.network")
+    systemd.service(service='systemd-networkd.service', running=True, restarted=True)
+
+elif host.name == 'plus':
+    pass
+
+else:
+    cleanup()
 
     if is_wifi:
         files.put(src="secrets/wpa_supplicant.conf", dest="/etc/wpa_supplicant/wpa_supplicant.conf")
 
-    files.template(src="templates/house.network.j2",
-                   dest="/etc/systemd/network/99-house.network",
+    addr = host.host_data['addr']
+    net = addr[:4]
+    gateway = net + '.0.1'
+    dns = gateway
+
+    files.template(src="templates/net/singlenic.network.j2",
+                   dest="/etc/systemd/network/99-bigasterisk.network",
                    create_remote_dir=True,
                    mac=host.host_data['mac'],
                    addr=addr,
                    gateway=gateway,
                    dns=dns)
     systemd.service(service='systemd-networkd.service', running=True, restarted=True)
-
-    # ns = '10.2.0.1'
-    # if host.name == 'prime':
-    #     ns = '8.8.8.8'
-    # elif host.name in ['slash']:
-    #     ns = '10.1.0.1'
-    # files.template(src='templates/resolv.conf.j2', dest='/etc/resolv.conf', ns=ns)
-
-if host.name == 'plus':
-    apt.packages(packages=['network-manager'], present=True)
-
-if host.name == 'bang':
-    files.template(src='templates/bang_interfaces.j2', dest='/etc/network/interfaces', user='root', group='root', mode='644')
-
-    # Now using a HW router for this firewall. No incoming connections.
-    # test connections from the outside:
-    # http://www.t1shopper.com/tools/port-scanner/
-    apt.packages(packages=['ufw'], present=False)
-
-if host.name == 'prime':
-    # using digitalocean network config:
-    # https://cloud.digitalocean.com/networking/firewalls/f68899ae-1aac-4469-b379-59ce2bbc988f/droplets?i=7c5072
-    apt.packages(packages=['ufw'], present=False)
-
-    files.line(name='shorter systemctl log window, for disk space',
-               path='/etc/systemd/journald.conf',
-               line='MaxFileSec',
-               replace="MaxFileSec=7day")
-
-    for port in [80, 443]:
-        files.template(src="templates/webforward.service.j2", dest=f"/etc/systemd/system/web_forward_{port}.service", port=port)
-        systemd.service(service=f'web_forward_{port}', enabled=True, restarted=True)

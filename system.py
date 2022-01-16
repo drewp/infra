@@ -65,3 +65,13 @@ if host.name == 'bang':
 
     apt.packages(packages=['nfs-kernel-server'])
     files.template(src='templates/bang_exports.j2', dest='/etc/exports')
+
+if host.name == 'prime':
+    files.line(name='shorter systemctl log window, for disk space',
+               path='/etc/systemd/journald.conf',
+               line='MaxFileSec',
+               replace="MaxFileSec=7day")
+
+    for port in [80, 443]:
+        files.template(src="templates/webforward.service.j2", dest=f"/etc/systemd/system/web_forward_{port}.service", port=port)
+        systemd.service(service=f'web_forward_{port}', enabled=True, restarted=True)
