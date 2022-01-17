@@ -30,7 +30,7 @@ def packages(ctx):
 
 @task
 def net(ctx):
-    ctx.run(cmd + 'inventory.py net.py -v --limit garage', pty=True)
+    ctx.run(cmd + 'inventory.py net.py -v', pty=True)
 
 
 @task
@@ -55,7 +55,7 @@ def sync(ctx):
 
 @task
 def mail(ctx):
-    ctx.run(cmd + 'inventory.py mail.py -vv', pty=True)
+    ctx.run(cmd + 'inventory.py mail.py', pty=True)
 
 
 @task

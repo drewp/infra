@@ -18,8 +18,8 @@ big = [
         'wireguard_address': '10.5.0.6',
     }),
     ('dot', {
-        'interface': 'enp3s0',
-        'ssh_hostname': '10.2.0.25',
+        'mac': 'd4:85:64:c3:db:56',
+        'ssh_hostname': '10.2.0.30',
         'addr': '10.2.0.30',
         'wireguard_address': '10.5.0.30',
     })
@@ -48,7 +48,7 @@ remote = [
         'wireguard_address': '10.5.0.2',
     }),
     ('plus', {
-        'ssh_hostname': '10.2.0.110',
+        'ssh_hostname': '10.2.0.131',
         'wireguard_address': '10.5.0.110',
     }),
 ]

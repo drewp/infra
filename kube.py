@@ -5,7 +5,12 @@ from pyinfra.operations import files, server, systemd
 
 is_pi = host.get_fact(LinuxDistribution)['name'] in ['Debian', 'Raspbian GNU/Linux']
 
+# https://github.com/k3s-io/k3s/releases
 k3s_version = 'v1.23.1+k3s1'
+
+# https://github.com/GoogleContainerTools/skaffold/releases
+skaffold_version = 'v1.35.2'
+
 master_ip = "10.5.0.1"
 server_node = 'bang'
 nodes = ['slash', 'dash', 'frontbed', 'garage']
@@ -93,7 +98,7 @@ if host.name in admin_from:
     files.chmod(target='/etc/rancher/k3s/k3s.yaml', mode='640')
 
     # see https://github.com/GoogleContainerTools/skaffold/releases
-    files.download(src='https://storage.googleapis.com/skaffold/releases/v1.35.1/skaffold-linux-amd64',
+    files.download(src=f'https://storage.googleapis.com/skaffold/releases/{skaffold_version}/skaffold-linux-amd64',
                    dest='/usr/local/bin/skaffold',
                    user='root',
                    group='root',
