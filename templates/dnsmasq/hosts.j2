@@ -6,11 +6,6 @@
 # for 'bigasterisk.com' etc instead of taking a trip to prime.
 10.2.0.1 bang bang.bigasterisk.com bigasterisk.com imap.bigasterisk.com repo.bigasterisk.com drewp.quickwitretort.com photo.bigasterisk.com projects.bigasterisk.com quickwitretort.com whatsplayingnext.com whopickedthis.com vpn-home.bigasterisk.com file.bigasterisk.com
 
-{% if net != '10.5' %}
-# so bang can see these names
-10.1.0.5 dash.bigasterisk.com
-10.1.0.6 slash.bigasterisk.com
-{% endif %}
 
 # sync with /my/proj/infra/inventory.py
 10.5.0.1   bang5.bigasterisk.com local.bigasterisk.com  
@@ -21,11 +16,22 @@
 10.5.0.17  frontbed5.bigasterisk.com
 10.5.0.30  dot5.bigasterisk.com
 10.5.0.110 plus5.bigasterisk.com
-10.5.0.112 drew-note85.bigasterisk.com
+10.5.0.112 drew-note5.bigasterisk.com
 
+{% if net != '10.5' %}
+# so bang can see these names
+10.1.0.5 dash.bigasterisk.com
+10.1.0.6 slash.bigasterisk.com
+{% endif %}
 
 {% if net == '10.5' %}
 10.5.0.1   bang.bigasterisk.com
 10.5.0.2   prime.bigasterisk.com
 10.5.0.5   dash.bigasterisk.com
+10.1.0.6   slash.bigasterisk.com
+10.5.0.14  garage.bigasterisk.com
+10.5.0.17  frontbed.bigasterisk.com
+10.5.0.30  dot.bigasterisk.com
+10.5.0.110 plus.bigasterisk.com
+10.5.0.112 drew-note.bigasterisk.com
 {% endif %}
