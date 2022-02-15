@@ -12,7 +12,9 @@ if is_pi:
     apt.packages(packages=['mandb', 'apt-listchanges'], present=False)
     files.template(src='templates/pi_sources.list.j2', dest='/etc/apt/sources.list', rel='bullseye')
     # 'apt upgrade'?
-    apt.packages(update=True, packages=['dirmngr', 'gnupg2', 'apt-utils'])
+    apt.packages(
+        update=False,  # see system.py
+        packages=['dirmngr', 'gnupg2', 'apt-utils'])
 
     apt.key(src='https://ftp-master.debian.org/keys/archive-key-8.asc')
     apt.key(src='https://ftp-master.debian.org/keys/archive-key-8-security.asc')
@@ -48,6 +50,7 @@ apt.packages(packages=[
     'ifstat',
     'mosquitto-clients',
     'ncdu',
+    "udns-utils",
 ])
 
 if not is_pi:
@@ -60,6 +63,8 @@ if not is_pi:
         'sysstat',
         'debian-goodies',
         'lxterminal',
+        'iotop',
+        'lpr',
     ])
 
 if not is_pi and not (host.name == 'prime'):
