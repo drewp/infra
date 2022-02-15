@@ -18,6 +18,13 @@ if host.name == 'prime':
 
     # something to run ~drewp/mbsync/go at startup
 
-    # maybe freshen the mbsync client cert when we're running this deploy, too
+    server.shell(commands=[
+        "cd /home/drewp/mbsync; /usr/bin/mbsync-get-cert 10.5.0.1 > servercert",
+    ])
 
 # other machines, route mail to bang or prime for delivery
+
+if host.name == 'bang':
+    server.shell(commands=[
+        "cd /my/serv/dovecot; invoke certs",
+    ])
