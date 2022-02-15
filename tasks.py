@@ -36,6 +36,11 @@ def net(ctx):
 @task
 def dns(ctx):
     ctx.run(cmd + 'inventory.py dns.py -v', pty=True)
+    ctx.run(cmd + 'inventory.py dns_check.py -v', pty=True)
+
+@task
+def dns_check(ctx):
+    ctx.run(cmd + 'inventory.py dns_check.py -v', pty=True)
 
 
 @task
@@ -45,7 +50,7 @@ def wireguard(ctx):
 
 @task
 def kube(ctx):
-    ctx.run(cmd + 'inventory.py kube.py ', pty=True)
+    ctx.run(cmd + 'inventory.py kube.py -vv ', pty=True)
 
 
 @task
@@ -55,7 +60,7 @@ def sync(ctx):
 
 @task
 def mail(ctx):
-    ctx.run(cmd + 'inventory.py mail.py', pty=True)
+    ctx.run(cmd + 'inventory.py mail.py ', pty=True)
 
 
 @task
