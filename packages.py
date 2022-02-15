@@ -37,8 +37,6 @@ if not is_pi and host.name != 'prime':
     apt.key(src='https://packages.microsoft.com/keys/microsoft.asc')
     apt.repo(src="deb [arch=amd64,arm64,armhf] http://packages.microsoft.com/repos/code stable main")
 
-    apt.ppa(src="ppa:savoury1/blender")
-
     apt.key(keyserver='keyserver.ubuntu.com', keyid='F24AEA9FB05498B7')
     apt.repo(src="deb [arch=amd64,i386] https://repo.steampowered.com/steam/ stable steam")
 
