@@ -44,7 +44,7 @@ if host.name == 'bang':
         files.template(src='templates/dnsmasq/dnsmasq.service.j2',
                        dest=f'/etc/systemd/system/dnsmasq_{net_name}.service',
                        net=net_name)
-        systemd.service(service=f'dnsmasq_{net_name}', restarted=True, daemon_reload=True)
+        systemd.service(service=f'dnsmasq_{net_name}', enabled=True, restarted=True, daemon_reload=True)
 
 if host.name in [
         'garage',
