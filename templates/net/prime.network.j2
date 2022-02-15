@@ -1,10 +1,14 @@
 # written by pyinfra
 
+# see systemd.network(5)
+
 [Match]
 MACAddress={{ mac }}
 
 [Network]
 Address=162.243.138.136/24
 Gateway=162.243.138.1
-DNS=10.5.0.1 8.8.8.8 8.8.4.4
+DNS=10.5.0.1%wg0
+DNS=8.8.8.8
+DNS=8.8.4.4
 Domains=bigasterisk.com
