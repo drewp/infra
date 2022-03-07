@@ -1,6 +1,6 @@
 from pyinfra import host
 from pyinfra.facts.server import LinuxDistribution
-from pyinfra.operations import apt, files, ssh
+from pyinfra.operations import apt, files, ssh, server
 
 is_pi = host.get_fact(LinuxDistribution)['name'] in ['Debian', 'Raspbian GNU/Linux']
 is_wifi_pi = host.name in ['frontdoor', 'living']
@@ -64,6 +64,16 @@ if not is_pi:
         'iotop',
         'lpr',
     ])
+    vers = '0.24.4'
+    home = '/home/drewp'
+    local = f"{home}/.local/kitty"
+    files.download(src=f"https://github.com/kovidgoyal/kitty/releases/download/v{vers}/kitty-{vers}-x86_64.txz",
+                   dest=f'/tmp/kitty-{vers}-x86_64.txz')
+    files.makedirs(local, exist_ok=True)
+    server.shell([
+        f"aunpack -Z {local} /tmp/kitty-{vers}-x86_64.txz",
+    ])
+    files.link(target="{local}/bin/kitty", path="{home}/bin/kitty")
 
 if not is_pi and not (host.name == 'prime'):
     apt.packages(packages='mlocate', present=False)
