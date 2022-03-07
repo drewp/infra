@@ -48,7 +48,7 @@ remote = [
         'wireguard_address': '10.5.0.2',
     }),
     ('plus', {
-        'ssh_hostname': '10.2.0.131',
+        'ssh_hostname': '10.2.0.136',
         'wireguard_address': '10.5.0.110',
     }),
 ]
