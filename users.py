@@ -55,7 +55,7 @@ if not is_pi:
     server.user(user='ari',
                 uid=3019,
                 group='ari',
-                groups=['docker', 'sudo', 'audio', 'video', 'lpadmin', 'lp'])
+                groups=['audio', 'dialout', 'docker', 'lp', 'lpadmin', 'sudo', 'video'])
 
     server.user(user='ffg', uid=3013, group='ffg')
 

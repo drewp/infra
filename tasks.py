@@ -1,5 +1,7 @@
 from invoke import task
 
+'🛁 bang(pts/2):/my/proj/infra% sudo inv users ssh system packages net dns wireguard kube sync mail'
+
 cmd = '''
 HOME=/root
 export HOME
