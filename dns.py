@@ -46,6 +46,8 @@ if host.name == 'bang':
                        net=net_name)
         systemd.service(service=f'dnsmasq_{net_name}', enabled=True, restarted=True, daemon_reload=True)
 
+    files.link('/etc/resolv.conf', '/run/systemd/resolve/stub-resolv.conf')
+
 if host.name in [
         'garage',
         'dash',
