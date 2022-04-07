@@ -49,6 +49,7 @@ apt.packages(packages=[
     'mosquitto-clients',
     'ncdu',
     "udns-utils",
+    "atool",
 ])
 
 if not is_pi:
@@ -63,17 +64,25 @@ if not is_pi:
         'lxterminal',
         'iotop',
         'lpr',
+        'nodejs',
+        'npm',
     ])
-    vers = '0.24.4'
+    vers = '0.24.4' # see https://github.com/kovidgoyal/kitty/releases
     home = '/home/drewp'
     local = f"{home}/.local/kitty"
+    dl = f'/tmp/kitty-{vers}-x86_64.txz'
     files.download(src=f"https://github.com/kovidgoyal/kitty/releases/download/v{vers}/kitty-{vers}-x86_64.txz",
-                   dest=f'/tmp/kitty-{vers}-x86_64.txz')
+                   dest=dl)
     files.makedirs(local, exist_ok=True)
     server.shell([
-        f"aunpack -Z {local} /tmp/kitty-{vers}-x86_64.txz",
+        f"mkdir -p {local}",  # https://github.com/Fizzadar/pyinfra/issues/777
+        f"aunpack --extract-to={local} {dl}",
     ])
     files.link(target="{local}/bin/kitty", path="{home}/bin/kitty")
+
+    server.shell([
+        "npm install -g pnpm@6.32.3",
+        ])
 
 if not is_pi and not (host.name == 'prime'):
     apt.packages(packages='mlocate', present=False)
