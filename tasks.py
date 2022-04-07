@@ -1,6 +1,5 @@
 from invoke import task
 
-'🛁 bang(pts/2):/my/proj/infra% sudo inv users ssh system packages net dns wireguard kube sync mail'
 
 cmd = '''
 HOME=/root
@@ -63,6 +62,11 @@ def sync(ctx):
 @task
 def mail(ctx):
     ctx.run(cmd + 'inventory.py mail.py ', pty=True)
+
+
+@task(pre=[users, ssh, system, packages, net, dns, wireguard, kube, sync, mail])
+def all(ctx):
+    ctx.run('touch /my/proj/infra/ran_all.timestamp')
 
 
 @task
