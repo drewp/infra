@@ -66,6 +66,8 @@ if host.name == 'bang':
     apt.packages(packages=['nfs-kernel-server'])
     files.template(src='templates/bang_exports.j2', dest='/etc/exports')
 
+    # sudo zfs set sharenfs="rw=10.5.0.0/16" stor6
+
 if host.name == 'prime':
     files.line(name='shorter systemctl log window, for disk space',
                path='/etc/systemd/journald.conf',

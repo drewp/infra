@@ -5,4 +5,4 @@
 /dev/disk/by-uuid/b88f75cd-9022-4af9-a11b-5a5a1fbd3132 /d2 ext4 defaults 0 0
 /dev/disk/by-uuid/73bcd201-5f77-4f68-9fba-47835c3c1692 /prev ext4 defaults 0 0
 /swap.img	none	swap	sw	0	0
-bang:/stor6/my /my nfs4 defaults 0 0
+bang5:/stor6/my /my nfs4 defaults 0 0
