@@ -68,8 +68,24 @@ def mail(ctx):
     ctx.run(cmd + 'inventory.py mail.py ', pty=True)
 
 
-@task(pre=[users, ssh, system, packages, net, dns, wireguard, kube, sync, mail])
+@task
 def all(ctx):
+    configs = [
+        'users.py',
+        'ssh.py',
+        'system.py',
+        'packages.py',
+        'net.py',
+        'dns.py',
+        'wireguard.py',
+        'kube.py',
+        'sync.py',
+        'mail.py',
+    ]
+    # https://github.com/Fizzadar/pyinfra/issues/787
+    #ctx.run(' '.join([cmd, 'inventory.py'] + configs), pty=True)
+    for c in configs:
+        ctx.run(' '.join([cmd, 'inventory.py', c]), pty=True, warn=True)
     ctx.run('touch /my/proj/infra/ran_all.timestamp')
 
 

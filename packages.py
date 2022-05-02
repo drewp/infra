@@ -73,7 +73,7 @@ if not is_pi:
     dl = f'/tmp/kitty-{vers}-x86_64.txz'
     files.download(src=f"https://github.com/kovidgoyal/kitty/releases/download/v{vers}/kitty-{vers}-x86_64.txz",
                    dest=dl)
-    files.makedirs(local, exist_ok=True)
+    files.directory(local)
     server.shell([
         f"mkdir -p {local}",  # https://github.com/Fizzadar/pyinfra/issues/777
         f"aunpack --extract-to={local} {dl}",

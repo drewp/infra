@@ -15,12 +15,12 @@ server.hostname(hostname=host.name)
 #
 
 files.link(path='/etc/localtime', target=f'/usr/share/zoneinfo/{TZ}')
-files.replace(path='/etc/timezone', match='.*', replace=TZ)
+files.replace(path='/etc/timezone', text='.*', replace=TZ)
 apt.packages(update=True,
              cache_time=86400,
              packages=['tzdata'],
              force=True,
-             env={
+             _env={
                  'TZ': TZ,
                  'LANG': 'en_US.UTF-8',
                  'DEBIAN_FRONTEND': 'noninteractive'
