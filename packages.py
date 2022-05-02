@@ -67,7 +67,7 @@ if not is_pi:
         'nodejs',
         'npm',
     ])
-    vers = '0.24.4' # see https://github.com/kovidgoyal/kitty/releases
+    vers = '0.25.0' # see https://github.com/kovidgoyal/kitty/releases
     home = '/home/drewp'
     local = f"{home}/.local/kitty"
     dl = f'/tmp/kitty-{vers}-x86_64.txz'
@@ -81,7 +81,8 @@ if not is_pi:
     files.link(target="{local}/bin/kitty", path="{home}/bin/kitty")
 
     server.shell([
-        "npm install -g pnpm@6.32.3",
+        # https://github.com/pnpm/pnpm/releases
+        "npm install -g pnpm@7.0.0",
         ])
 
 if not is_pi and not (host.name == 'prime'):
