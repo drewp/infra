@@ -1,6 +1,5 @@
 from invoke import task
 
-
 cmd = '''
 HOME=/root
 export HOME
@@ -31,13 +30,14 @@ def packages(ctx):
 
 @task
 def net(ctx):
-    ctx.run(cmd + 'inventory.py net.py -v', pty=True)
+    ctx.run(cmd + 'inventory.py net.py', pty=True)
 
 
 @task
 def dns(ctx):
-    ctx.run(cmd + 'inventory.py dns.py -v', pty=True)
-    ctx.run(cmd + 'inventory.py dns_check.py -v', pty=True)
+    ctx.run(cmd + 'inventory.py dns.py', pty=True)
+    ctx.run(cmd + 'inventory.py dns_check.py', pty=True)
+
 
 @task
 def dns_check(ctx):
@@ -55,7 +55,7 @@ def wireguard(ctx):
 
 @task
 def kube(ctx):
-    ctx.run(cmd + 'inventory.py kube.py -vv ', pty=True)
+    ctx.run(cmd + 'inventory.py kube.py ', pty=True)
 
 
 @task

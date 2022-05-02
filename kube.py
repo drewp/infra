@@ -1,3 +1,4 @@
+import tempfile
 from pyinfra import host
 from pyinfra.facts.files import FindInFile
 from pyinfra.facts.server import Arch, LinuxDistribution

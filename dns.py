@@ -35,7 +35,7 @@ if host.name == 'bang':
 
     dhcp_hosts = prepare_dhcp_hosts()
 
-    for net_name in ['10.1', '10.2', '10.5']:
+    for net_name in ['10.2', '10.5']:
         files.directory(path=f'/opt/dnsmasq/{net_name}')
         files.template(src='templates/dnsmasq/dnsmasq.conf.j2', dest=f'/opt/dnsmasq/{net_name}/dnsmasq.conf', net=net_name)
         files.template(src='templates/dnsmasq/hosts.j2', dest=f'/opt/dnsmasq/{net_name}/hosts', net=net_name)

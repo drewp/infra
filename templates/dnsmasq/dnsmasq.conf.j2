@@ -27,17 +27,6 @@ domain=bigasterisk.com
 
 log-dhcp
 dhcp-sequential-ip
-{% if net == "10.1" %}
-dhcp-broadcast
-dhcp-authoritative
-dhcp-option=option:domain-name,bigasterisk.com
-dhcp-hostsfile=/opt/dnsmasq/{{ net }}/dhcp_hosts
-dhcp-leasefile=/opt/dnsmasq/{{ net }}/leases
-dhcp-range=enp1s0,10.1.0.0,static,infinite
-dhcp-range=tag:!known,enp1s0,10.1.0.100,10.1.0.180
-dhcp-option=enp1s0,option:dns-server,10.1.0.1
-dhcp-option=enp1s0,option:router,10.1.0.1
-{% endif %}
 
 {% if net == "10.2" %}
 dhcp-broadcast
