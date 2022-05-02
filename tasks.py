@@ -43,6 +43,10 @@ def dns(ctx):
 def dns_check(ctx):
     ctx.run(cmd + 'inventory.py dns_check.py -v', pty=True)
 
+@task
+def dns_k8s_check(ctx):
+    ctx.run('env/bin/python dns_k8s_check.py', pty=True)
+
 
 @task
 def wireguard(ctx):

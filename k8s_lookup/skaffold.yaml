@@ -1,0 +1,16 @@
+apiVersion: skaffold/v2beta27
+kind: Config
+metadata:
+  name: k8s-lookup
+build:
+  platforms: [amd64]
+  # tagPolicy:
+  #   dateTime:
+  #     format: "2006-01-02_15-04-05"
+  #     timezone: "Local"
+  artifacts:
+  - image: bang5:5000/k8s_lookup_image
+deploy:
+  kubectl:
+    manifests:
+    - deploy.yaml

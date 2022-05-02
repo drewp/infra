@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: k8s-lookup
+spec:
+  selector:
+    matchLabels:
+      name: k8s-lookup
+  template:
+    metadata:
+      labels:
+        name: k8s-lookup
+    spec:
+      tolerations:
+      # this toleration is to have the daemonset runnable on master nodes
+      # remove it if your masters can't run pods
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      containers:
+      - name: k8s-lookup
+        image: bang5:5000/k8s_lookup_image
+      terminationGracePeriodSeconds: 1
