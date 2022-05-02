@@ -28,7 +28,7 @@ if host.name in [nodes + [server_node]]:
         group='root',
         mode='755',
         cache_time=43000,
-       # force=True,  # to get a new version
+        # force=True,  # to get a new version
     )
 
     if is_pi:
@@ -69,19 +69,30 @@ if host.name in [nodes + [server_node]]:
     )
     systemd.service(service=service_name, daemon_reload=True, enabled=True, restarted=True)
 
-# if bang:
-# files.template(
-#     src='templates/kube/Corefile.j2',
-#     dest='/etc/k3s_coredns_config',
-# )
-# server.shell(commands=[
-#     'kubectl replace configmap '
-#     '-n kube-system '
-#     'coredns '
-#     '--from-file=Corefile=/etc/k3s_coredns_config '
-#     '-o yaml '
-#     '--dry-run=client | kubectl apply -',
-# ])
+if host.name == 'bang':
+    files.put(
+        src="templates/kube/coredns.yaml",
+        dest="/var/lib/rancher/k3s/server/manifests/coredns.yaml",
+        mode="600",
+    )
+    # files.put(
+    #     src="templates/kube/coredns-map.yaml",
+    #     dest="/var/lib/rancher/k3s/server/manifests/coredns-map.yaml",
+    #     mode="600",
+    # )
+    # tmp = tempfile.NamedTemporaryFile(suffix='.yaml')
+    # files.template(
+    #     src='templates/kube/Corefile.yaml.j2',
+    #     dest=tmp.name,
+    # )
+    # server.shell(commands=[
+    #     'kubectl replace configmap '
+    #     # '-n kube-system '
+    #     # 'coredns '
+    #     f'--filename={tmp.name} '
+    #     '-o yaml '
+    #     # '--dry-run=client | kubectl apply -',
+    # ])
 # one-time thing at cluster create time? not sure
 # - name: Replace https://localhost:6443 by https://master-ip:6443
 #   command: >-
