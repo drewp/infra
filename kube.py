@@ -34,7 +34,6 @@ if host.name in nodes + [server_node]:
 
     if is_pi:
         old_cmdline = host.get_fact(FindInFile, path='/boot/cmdline.txt', pattern=r'.*')[0]
-        print(repr(old_cmdline))
         if 'cgroup' not in old_cmdline:
             cmdline = old_cmdline + ' cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory'
             files.line(path='/boot/cmdline.txt', line='.*', replace=cmdline)

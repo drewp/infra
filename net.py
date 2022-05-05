@@ -47,10 +47,11 @@ elif host.name == 'bang':
     cleanup()
 
     files.directory('/etc/systemd/network')
-    files.template(src="templates/net/bang_10.1.network.j2", dest="/etc/systemd/network/99-10.1.network")
+
     files.template(src="templates/net/bang_10.2.network.j2", dest="/etc/systemd/network/99-10.2.network")
     files.template(src="templates/net/bang_isp.network.j2", dest="/etc/systemd/network/99-isp.network")
     systemd.service(service='systemd-networkd.service', running=True, restarted=True)
+    
 
 elif host.name == 'plus':
     pass
