@@ -61,16 +61,15 @@ else:
     if is_wifi:
         files.put(src="secrets/wpa_supplicant.conf", dest="/etc/wpa_supplicant/wpa_supplicant.conf")
 
-    addr = host.host_data['addr']
-    net = addr[:4]
-    gateway = net + '.0.1'
-    dns = gateway
+    # addr = host.host_data['addr']
+    # net = addr[:4]
+    # gateway = net + '.0.1'
+    # dns = gateway
 
-    files.template(src="templates/net/singlenic.network.j2",
-                   dest="/etc/systemd/network/99-bigasterisk.network",
-                   create_remote_dir=True,
-                   mac=host.host_data['mac'],
-                   addr=addr,
-                   gateway=gateway,
-                   dns=dns)
+    files.template(
+        src="templates/net/singlenic.network.j2",
+        dest="/etc/systemd/network/99-bigasterisk.network",
+        create_remote_dir=True,
+        mac=host.host_data['mac'],
+    )
     systemd.service(service='systemd-networkd.service', running=True, restarted=True)

@@ -23,7 +23,7 @@ def prepare_dhcp_hosts():
     dhcp_hosts = tempfile.NamedTemporaryFile(mode='wt', encoding='ascii')
     dhcp_hosts.write("# written by pyinfra\n\n")
     for row in lanscape_config['dhcp_table']:
-        dhcp_hosts.write(f'{row["mac"]},{row["hostname"]},{row["ip"]},infinite\n')
+        dhcp_hosts.write(f'{row["mac"]},{row["hostname"]},{row["ip"]},24h\n')
     dhcp_hosts.flush()
     return dhcp_hosts
 
