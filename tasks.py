@@ -57,6 +57,10 @@ def wireguard(ctx):
 def kube(ctx):
     ctx.run(cmd + 'inventory.py kube.py ', pty=True)
 
+@task
+def kube_bang(ctx):
+    ctx.run(cmd + 'inventory.py kube.py --limit bang', pty=True)
+
 
 @task
 def sync(ctx):
