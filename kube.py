@@ -17,7 +17,7 @@ server_node = 'bang'
 nodes = ['slash', 'dash', 'frontbed', 'garage']
 admin_from = ['bang', 'slash', 'dash']
 
-if host.name in [nodes + [server_node]]:
+if host.name in nodes + [server_node]:
     server.sysctl(key='net.ipv4.ip_forward', value="1", persist=True)
     server.sysctl(key='net.ipv6.conf.all.forwarding', value="1", persist=True)
 
