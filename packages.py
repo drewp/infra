@@ -78,7 +78,7 @@ if not is_pi:
         'mtr-tiny',
         'tcpdump',
     ])
-    vers = '0.25.0' # see https://github.com/kovidgoyal/kitty/releases
+    vers = '0.25.2' # see https://github.com/kovidgoyal/kitty/releases
     home = '/home/drewp'
     local = f"{home}/.local/kitty"
     dl = f'/tmp/kitty-{vers}-x86_64.txz'
@@ -93,7 +93,7 @@ if not is_pi:
 
     server.shell([
         # https://github.com/pnpm/pnpm/releases
-        "npm install -g pnpm@7.0.0",
+        "npm install -g pnpm@7.2.1",
         ])
 
 apt.packages(packages='mlocate', present=False)

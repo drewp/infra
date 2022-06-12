@@ -7,7 +7,7 @@ from pyinfra.operations import files, server, systemd
 is_pi = host.get_fact(LinuxDistribution)['name'] in ['Debian', 'Raspbian GNU/Linux']
 
 # https://github.com/k3s-io/k3s/releases
-k3s_version = 'v1.23.6+k3s1'
+k3s_version = 'v1.24.1+k3s1'
 
 # https://github.com/GoogleContainerTools/skaffold/releases
 skaffold_version = 'v1.38.0'
