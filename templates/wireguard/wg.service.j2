@@ -1,0 +1,33 @@
+# written by pyinfra
+
+[Unit]
+Description=WireGuard via wg-quick(8) for {{wireguard_interface}}
+After=network-online.target nss-lookup.target
+Wants=network-online.target nss-lookup.target
+PartOf=wg-quick.target
+Documentation=man:wg-quick(8)
+Documentation=man:wg(8)
+Documentation=https://www.wireguard.com/
+Documentation=https://www.wireguard.com/quickstart/
+Documentation=https://git.zx2c4.com/wireguard-tools/about/src/man/wg-quick.8
+Documentation=https://git.zx2c4.com/wireguard-tools/about/src/man/wg.8
+
+{% if host.name == 'bang' and wireguard_interface == 'wg0' %}
+# startup order has to be like this:
+#    dnsmasq_10.2
+#    wg-quick@wg0.service
+#    dnsmasq_10.5
+
+Requires=dnsmasq_10.2.service
+{% endif %}
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/wg-quick up {{wireguard_interface}}
+ExecStop=/usr/bin/wg-quick down {{wireguard_interface}}
+ExecReload=/bin/bash -c 'exec /usr/bin/wg syncconf {{wireguard_interface}} <(exec /usr/bin/wg-quick strip {{wireguard_interface}})'
+Environment=WG_ENDPOINT_RESOLUTION_RETRIES=infinity
+
+[Install]
+WantedBy=multi-user.target

@@ -2,7 +2,7 @@ import subprocess
 
 from pyinfra import host
 from pyinfra.facts.files import FindInFile
-from pyinfra.operations import apt, files, systemd
+from pyinfra.operations import apt, files, server, systemd
 
 # other options:
 #   https://www.reddit.com/r/WireGuard/comments/fkr240/shortest_path_between_peers/
@@ -54,7 +54,13 @@ for wireguard_interface in ['wg0', 'bogasterisk']:
         peer_block=peer_block,
     )
     svc = f'wg-quick@{wireguard_interface}.service'
-    files.link(path=f'/etc/systemd/system/multi-user.target.wants/{svc}', target='/lib/systemd/system/wg-quick@.service')
+
+    files.template(src='templates/wireguard/wg.service.j2',
+                   dest=f'/etc/systemd/system/{svc}',
+                   wireguard_interface=wireguard_interface)
+    systemd.service(service=f'{svc}', enabled=True, restarted=True, daemon_reload=True)
+
+    # files.link(path=f'/etc/systemd/system/multi-user.target.wants/{svc}', target='/lib/systemd/system/wg-quick@.service')
 
     systemd.service(service=svc, daemon_reload=True, restarted=True, enabled=True)
 
