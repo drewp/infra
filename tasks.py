@@ -36,7 +36,6 @@ def net(ctx):
 @task
 def dns(ctx):
     ctx.run(cmd + 'inventory.py dns.py', pty=True)
-    ctx.run(cmd + 'inventory.py dns_check.py', pty=True)
 
 
 @task

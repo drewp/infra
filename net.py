@@ -13,7 +13,7 @@ def cleanup():
             # /lib/systemd/network              # These OS files are ok.
             '/usr/local/lib/systemd/network/',  # Probably no such dir.
             '/run/systemd/network/',  # Previous netplan attempts dumped in here.
-            '/etc/systemd/network/',  # I'm going to work in here.
+            #'/etc/systemd/network/',  # I'm going to work in here.
     ]:
         files.sync(
             src="files/empty_dir/",
@@ -50,8 +50,7 @@ elif host.name == 'bang':
 
     files.template(src="templates/net/bang_10.2.network.j2", dest="/etc/systemd/network/99-10.2.network")
     files.template(src="templates/net/bang_isp.network.j2", dest="/etc/systemd/network/99-isp.network")
-    systemd.service(service='systemd-networkd.service', running=True, restarted=True)
-    
+    systemd.service(service='systemd-networkd.service', enabled=True, running=True, restarted=True)
 
 elif host.name == 'plus':
     pass
@@ -87,4 +86,4 @@ else:
         create_remote_dir=True,
         mac=host.host_data['mac'],
     )
-    systemd.service(service='systemd-networkd.service', running=True, restarted=True)
+    systemd.service(service='systemd-networkd.service', enabled=True, running=True, restarted=True)

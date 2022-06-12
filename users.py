@@ -25,7 +25,7 @@ for group in [
         'docker',
         'render',
 ]:
-    server.group(group=group)
+    server.group(group=group, system=True)
 
 server.group(group='drewp', gid=drewp_gid)
 server.user(user='drewp', group='drewp', groups=drewp_groups)
@@ -43,8 +43,6 @@ if not is_pi:
 
     server.group(group='damon', gid=3011)
     server.group(group='ffg', gid=3008)
-
-    server.group(group='drewnote', gid=1009)
 
     server.user(user='drewp',
                 uid=drewp_uid,
@@ -70,11 +68,12 @@ if not is_pi:
     server.group(group='kelsi', gid=1008)
     server.user(user='kelsi', uid=1008, group='elastic')
 
-    server.group(group='drewnote', gid=1009)
-    server.user(user='drewnote', uid=1009)
+    if host.name != 'pipe':  # https://github.com/Fizzadar/pyinfra/issues/835
+        server.group(group='drewnote', gid=1009)
+        server.user(user='drewnote', uid=1009)
 
-    server.group(group='prometheus', gid=1010)
-    server.user(user='prometheus', uid=1010)
+        server.group(group='prometheus', gid=1010)
+        server.user(user='prometheus', uid=1010)
 
 if is_pi:
     server.group(group='fuse')

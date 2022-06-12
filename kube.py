@@ -20,6 +20,8 @@ admin_from = ['bang', 'slash', 'dash']
 if host.name in nodes + [server_node]:
     server.sysctl(key='net.ipv4.ip_forward', value="1", persist=True)
     server.sysctl(key='net.ipv6.conf.all.forwarding', value="1", persist=True)
+    server.sysctl(key='fs.inotify.max_user_instances', value='8192', persist=True)
+    server.sysctl(key='fs.inotify.max_user_watches', value='524288', persist=True)
 
     tail = 'k3s' if host.get_fact(Arch) == 'x86_64' else 'k3s-armhf'
     files.download(

@@ -89,8 +89,8 @@ if not is_pi:
         "npm install -g pnpm@7.0.0",
         ])
 
-if not is_pi and not (host.name == 'prime'):
-    apt.packages(packages='mlocate', present=False)
+apt.packages(packages='mlocate', present=False)
+if not is_pi and host.name not in ['prime', 'pipe']:
     apt.packages(packages='plocate')
 
 if host.name == "bang":
