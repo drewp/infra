@@ -47,7 +47,7 @@ if host.name in ['prime']:
     check('slash', '10.5.0.6')
 else:
     check('bang', '10.2.0.1')
-    check('slash', '10.2.0.201')
+    check('slash', '10.2.0.127')
 
 check('bang5', '10.5.0.1')
 check('prime', '10.5.0.2')

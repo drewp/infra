@@ -7,6 +7,17 @@ Wants=nss-lookup.target
 Before=nss-lookup.target
 After=network.target
 
+# startup order has to be like this:
+#    dnsmasq_10.2
+#    wg-quick@wg0.service
+#    dnsmasq_10.5
+{% if net == '10.2' %}
+#Before=wg-quick@wg0.service
+{% endif %}
+{% if net == '10.5' %}
+Requires=wg-quick@wg0.service
+{% endif %}
+
 [Service]
 Type=simple
 

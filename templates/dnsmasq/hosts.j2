@@ -8,6 +8,8 @@
 
 
 # sync with /my/proj/infra/inventory.py
+# and with templates/wireguard/wg0.conf.j2
+# Hosts with fixed wg0 addresses:
 10.5.0.1   bang5.bigasterisk.com local.bigasterisk.com  
 10.5.0.2   prime5.bigasterisk.com prime.bigasterisk.com 
 10.5.0.5   dash5.bigasterisk.com
@@ -16,11 +18,17 @@
 10.5.0.17  frontbed5.bigasterisk.com
 10.5.0.30  dot5.bigasterisk.com
 10.5.0.110 plus5.bigasterisk.com
-10.5.0.113 drew-note5.bigasterisk.com
+10.5.0.112 drew-note5.bigasterisk.com
+
+{% if net == '10.2' %}
+# Hosts with fixed addrs who don't introduce via dhcp:
+# 162.243.138.136   prime.bigasterisk.com
+10.2.0.3 pipe pipe.bigasterisk.com
+{% endif %}
 
 {% if net == '10.5' %}
+# Names that should be routed on wg0 when the DNS lookup is on wg0:
 10.5.0.1   bang.bigasterisk.com
-10.5.0.2   prime.bigasterisk.com
 10.5.0.5   dash.bigasterisk.com
 10.5.0.6   slash.bigasterisk.com
 10.5.0.14  garage.bigasterisk.com

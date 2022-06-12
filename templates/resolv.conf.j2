@@ -3,5 +3,10 @@
 # see 'resolvectl status' for more
 
 nameserver {{ ns }}
+{% if host.name == 'prime' %}
+# don't rely on home dns just to receive email
+nameserver 8.8.4.4
+{% endif %}
+
 options edns0
 search bigasterisk.com

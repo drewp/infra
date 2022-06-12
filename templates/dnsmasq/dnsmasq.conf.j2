@@ -10,12 +10,6 @@ bind-interfaces
 
 domain-needed
 no-resolv
-# i didn't say --all-servers, but it was behaving like that
-server=208.201.224.11
-#server=208.201.224.33
-#server=8.8.4.4
-#server=8.8.8.8
-local=/bigasterisk.com/
 no-hosts
 addn-hosts=/opt/dnsmasq/{{ net }}/hosts
 local-ttl=30
@@ -24,8 +18,10 @@ cache-size=10000
 neg-ttl=60
 dns-forward-max=1000
 domain=bigasterisk.com
-
+# log-queries
+# log-debug
 log-dhcp
+
 dhcp-sequential-ip
 
 {% if net == "10.2" %}
@@ -38,6 +34,17 @@ dhcp-range=ens5,10.2.0.0,static,infinite
 dhcp-range=tag:!known,ens5,10.2.0.125,10.2.0.220,24h
 dhcp-option=ens5,option:dns-server,10.2.0.1
 dhcp-option=ens5,option:router,10.2.0.1
+
+local=/bigasterisk.com/
+# i didn't say --all-servers, but it was behaving like that
+server=208.201.224.11
+#server=208.201.224.33
+#server=8.8.4.4
+#server=8.8.8.8
 {% endif %}
 
+{% if net == "10.5" %}
 # net==10.5 is not used for dhcp at all
+# use ./hosts, then try the server that knows the dhcp leases
+server=10.2.0.1
+{% endif %}

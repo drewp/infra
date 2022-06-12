@@ -53,12 +53,12 @@ metadata:
   namespace: kube-system
 data:
   Corefile: |
-    # update 2022-04-19T20:20
+    # update 2022-05-17T10:38
     .:53 {
         errors
         health
         ready
-        kubernetes cluster.local in-addr.arpa ip6.arpa {
+        kubernetes %{CLUSTER_DOMAIN}% in-addr.arpa ip6.arpa {
           pods insecure
           fallthrough in-addr.arpa ip6.arpa
         }
@@ -122,7 +122,7 @@ spec:
               k8s-app: kube-dns
       containers:
       - name: coredns
-        image: rancher/mirrored-coredns-coredns:1.8.4
+        image: %{SYSTEM_DEFAULT_REGISTRY}%rancher/mirrored-coredns-coredns:1.9.1
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -206,7 +206,7 @@ metadata:
 spec:
   selector:
     k8s-app: kube-dns
-  clusterIP: 10.43.0.10
+  clusterIP: %{CLUSTER_DNS}%
   ports:
   - name: dns
     port: 53
