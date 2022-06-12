@@ -18,7 +18,7 @@ elif is_pi:
     # 'apt upgrade'?
     apt.packages(
         update=False,  # see system.py
-        packages=['dirmngr', 'gnupg2', 'apt-utils'])
+        packages=['dirmngr', 'gnupg2', 'apt-utils', 'aptitude'])
 
     apt.key(src='https://ftp-master.debian.org/keys/archive-key-8.asc')
     apt.key(src='https://ftp-master.debian.org/keys/archive-key-8-security.asc')
@@ -54,6 +54,7 @@ apt.packages(packages=[
     'ncdu',
     "udns-utils",
     "atool",
+    'iproute2', # needed for wireguard
 ])
 
 if not is_pi:
@@ -70,6 +71,12 @@ if not is_pi:
         'lpr',
         'nodejs',
         'npm',
+        'ethtool',
+        'speedtest-cli',
+        'net-tools',
+        'oping',
+        'mtr-tiny',
+        'tcpdump',
     ])
     vers = '0.25.0' # see https://github.com/kovidgoyal/kitty/releases
     home = '/home/drewp'
