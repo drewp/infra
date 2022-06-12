@@ -1,0 +1,8 @@
+[Unit]
+After=systemd-networkd.service
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/iptables -A POSTROUTING --table nat --out-interface eth0 --jump MASQUERADE
+

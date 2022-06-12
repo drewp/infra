@@ -7,7 +7,7 @@ is_pi = host.get_fact(LinuxDistribution)['name'] in ['Debian', 'Raspbian GNU/Lin
 # raspbian took 1000 for 'pi' group, but drewp is rarely used on pi
 # setups so hopefully it won't matter much that drew group has a
 # different id.
-drewp_gid = 1000 if not is_pi else 501
+drewp_gid = 1000 if (not is_pi and host.name != 'pipe') else 501
 drewp_uid = 501
 drewp_groups = [
     'lp', 'adm', 'dialout', 'cdrom', 'sudo', 'audio', 'video', 'plugdev',

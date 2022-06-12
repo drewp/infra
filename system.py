@@ -33,7 +33,7 @@ apt.packages(update=True,
 fstab_file = f'files/fstab/{host.name}'
 if os.path.exists(fstab_file):
     files.put(src=fstab_file, dest='/etc/fstab')
-if is_pi:
+if is_pi and host.name != 'pipe':
     for line in [
             'tmpfs /var/log tmpfs defaults,noatime,mode=0755 0 0',
             'tmpfs /tmp tmpfs defaults,noatime 0 0',
@@ -60,9 +60,10 @@ if not is_pi:
     systemd.service(service='sshd', reloaded=True)
 
 
-if host.name == 'bang':
+if host.name in ['bang', 'pipe']:
     server.shell(commands=['systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target'])
 
+if host.name == 'bang':
     apt.packages(packages=['nfs-kernel-server'])
     files.template(src='templates/bang_exports.j2', dest='/etc/exports')
 

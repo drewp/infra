@@ -56,6 +56,20 @@ elif host.name == 'bang':
 elif host.name == 'plus':
     pass
 
+elif host.name == 'pipe':   
+    cleanup()
+
+    files.directory('/etc/systemd/network')
+
+    files.template(src="templates/net/pipe_10.2.network.j2", dest="/etc/systemd/network/99-10.2.network")
+    files.template(src="templates/net/pipe_isp.network.j2", dest="/etc/systemd/network/99-isp.network")
+    systemd.service(service='systemd-networkd.service', enabled=True, running=True, restarted=True)
+    systemd.service(service='networking.service', enabled=False, running=False)
+    server.sysctl(key='net.ipv4.ip_forward', value=1, persist=True)
+    files.template(src="templates/net/house_net.service.j2", dest="/etc/systemd/system/house_net.service")
+    systemd.service(service='house_net.service', daemon_reload=True, enabled=True, running=True, restarted=True)
+
+
 else:
     cleanup()
 

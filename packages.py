@@ -8,7 +8,11 @@ is_wifi_pi = host.name in ['frontdoor', 'living']
 if not is_pi:
     apt.key(keyserver='keyserver.ubuntu.com', keyid='8B48AD6246925553')
 
-if is_pi:
+if host.name == 'pipe':
+    apt.packages(packages=['mandb', 'apt-listchanges'], present=False)
+    files.template(src='templates/odroid_sources.list.j2', dest='/etc/apt/sources.list', rel='focal')
+
+elif is_pi:
     apt.packages(packages=['mandb', 'apt-listchanges'], present=False)
     files.template(src='templates/pi_sources.list.j2', dest='/etc/apt/sources.list', rel='bullseye')
     # 'apt upgrade'?

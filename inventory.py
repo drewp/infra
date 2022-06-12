@@ -22,6 +22,14 @@ big = [
     })
 ]
 
+small = [
+    ('pipe', {
+        'mac': '00:05:1b:33:3e:81',
+        'ssh_hostname': '10.2.0.3',
+        'wireguard_address': '10.5.0.3',
+    }),
+]
+
 pi = [
     ('frontbed', {
         'mac': 'b8:27:eb:e9:d3:44',
