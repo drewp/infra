@@ -1,0 +1,6 @@
+# written by pyinfra
+
+# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+/dev/disk/by-uuid/5a6ce8db-cde0-4c26-b6a4-08faef2e01a2 / ext4 defaults 0 0
+/swap.img	none	swap	sw	0	0
+/dev/disk/by-uuid/78f08fb8-28cb-4af0-a579-36d7875ed558 /d2 ext4 defaults 0 0

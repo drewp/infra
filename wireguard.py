@@ -57,3 +57,9 @@ for wireguard_interface in ['wg0', 'bogasterisk']:
     files.link(path=f'/etc/systemd/system/multi-user.target.wants/{svc}', target='/lib/systemd/system/wg-quick@.service')
 
     systemd.service(service=svc, daemon_reload=True, restarted=True, enabled=True)
+
+if host.name == 'bang':
+    # recompute, or else maybe dnsmasq_10.5 won't start
+    server.shell("systemctl enable dnsmasq_10.2.service")
+    server.shell("systemctl enable dnsmasq_10.5.service")
+    server.shell("systemctl enable wg-quick@wg0.service")

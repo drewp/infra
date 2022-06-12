@@ -6,8 +6,8 @@ big = [
         'wireguard_address': '10.5.0.1',
     }),  #
     ('dash', {
-        "mac": "b8:97:5a:17:d7:1f",
-        'ssh_hostname': 'dash',
+        "mac": "b8:97:5a:17:d7:1fzzz",
+        'ssh_hostname': '10.2.0.212',
         'wireguard_address': '10.5.0.5',
     }),
     ('slash', {
@@ -16,7 +16,7 @@ big = [
         'wireguard_address': '10.5.0.6',
     }),
     ('dot', {
-        'mac': '1c:c1:de:56:e6:70',
+        'mac': '1c:c1:de:56:e6:70zzz',
         'ssh_hostname': 'dot',
         'wireguard_address': '10.5.0.30',
     })
@@ -31,11 +31,11 @@ small = [
 ]
 
 pi = [
-    ('frontbed', {
-        'mac': 'b8:27:eb:e9:d3:44',
-        'ssh_hostname': 'frontbed',
-        'wireguard_address': '10.5.0.17',
-    }),
+#    ('frontbed', {
+#        'mac': 'b8:27:eb:e9:d3:44',
+#        'ssh_hostname': 'frontbed',
+#        'wireguard_address': '10.5.0.17',
+#    }),
     ('garage', {
         'mac': 'b8:27:eb:81:17:92',
         'ssh_hostname': 'garage',
