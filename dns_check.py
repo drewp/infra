@@ -33,13 +33,13 @@ etc
 '''
 
 if host.name in ['dash', 'bang', 'slash']:
-    check('dash', '10.2.0.199')
+    check('dash', '10.2.0.212')
     check('projects.bigasterisk.com', '10.2.0.1')
 elif host.name in ['prime']:
     check('dash', '10.5.0.5')
     check('projects.bigasterisk.com', '10.2.0.1')  # expected the public addr, but fine
 else:
-    check('dash', '10.2.0.199')
+    check('dash', '10.2.0.212')
     check('projects.bigasterisk.com', '10.2.0.1')
 
 if host.name in ['prime']:

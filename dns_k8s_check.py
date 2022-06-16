@@ -1,6 +1,11 @@
 import json
 import subprocess
 
+corednsConfig = subprocess.check_output(["kubectl", "get", "-n", "kube-system", "configmap/coredns", "-o", "yaml"]).decode('ascii')
+print(corednsConfig)
+if 'forward . 10.5.0.1' not in corednsConfig:
+    raise ValueError("coredns config is wrong")
+
 subprocess.check_call(["skaffold", "run"], cwd="/my/proj/infra/k8s_lookup/")
 
 try:
