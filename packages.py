@@ -93,7 +93,8 @@ if not is_pi:
 
     server.shell([
         # https://github.com/pnpm/pnpm/releases
-        "npm install -g pnpm@7.2.1",
+        # but also https://pnpm.io/installation#compatibility
+        "npm install -g pnpm@6.32.22",
         ])
 
 apt.packages(packages='mlocate', present=False)
