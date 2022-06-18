@@ -63,7 +63,12 @@ if host.name in nodes + [server_node]:
         token=token,
         wg_ip=host.host_data['wireguard_address'],
     )
-
+    files.template(
+        src='templates/kube/k3s_resolv.conf.j2',
+        dest='/etc/k3s_resolv.conf',
+        master_ip=master_ip,
+        wg_ip=host.host_data['wireguard_address'],
+    )
     files.template(
         src='templates/kube/k3s.service.j2',
         dest=f'/etc/systemd/system/{service_name}',
