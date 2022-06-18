@@ -11,8 +11,8 @@ def prepare_dhcp_hosts():
         'kubectl',
         'get',
         'svc',
-        '--field-selector=metadata.name=lanscape',
-        "-o=jsonpath={.items[0].spec.clusterIP}",
+        'lanscape',
+        "-o=jsonpath={.spec.clusterIP}",
     ],
                                           encoding='ascii')
     url = f'http://{lanscape_ip}/dnsConfig'
