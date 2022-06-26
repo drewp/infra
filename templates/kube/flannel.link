@@ -1,0 +1,7 @@
+# from https://github.com/flannel-io/flannel/issues/1155
+
+[Match]
+OriginalName=flannel*
+
+[Link]
+MACAddressPolicy=none

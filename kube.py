@@ -7,10 +7,10 @@ from pyinfra.operations import files, server, systemd
 is_pi = host.get_fact(LinuxDistribution)['name'] in ['Debian', 'Raspbian GNU/Linux']
 
 # https://github.com/k3s-io/k3s/releases
-k3s_version = 'v1.24.1+k3s1'
+k3s_version = 'v1.24.2-rc1+k3s1'
 
 # https://github.com/GoogleContainerTools/skaffold/releases
-skaffold_version = 'v1.38.0'
+skaffold_version = 'v1.39.0'
 
 master_ip = "10.5.0.1"
 server_node = 'bang'
@@ -31,7 +31,7 @@ if host.name in nodes + [server_node]:
         group='root',
         mode='755',
         cache_time=43000,
-        # force=True,  # to get a new version
+        #force=True,  # to get a new version
     )
 
     if is_pi:
@@ -41,11 +41,11 @@ if host.name in nodes + [server_node]:
             files.line(path='/boot/cmdline.txt', line='.*', replace=cmdline)
             # pi needs reboot now
 
-        server.shell(commands=[
-            'update-alternatives --set iptables /usr/sbin/iptables-nft',
-            'update-alternatives --set ip6tables /usr/sbin/ip6tables-nft',
-        ])
-        # needs reboot if this changed
+    server.shell(commands=[
+        'update-alternatives --set iptables /usr/sbin/iptables-nft',
+        'update-alternatives --set ip6tables /usr/sbin/ip6tables-nft',
+    ])
+    # needs reboot if this changed
 
     # See https://github.com/rancher/k3s/issues/1802 and https://rancher.com/docs/k3s/latest/en/installation/private-registry/
     files.directory(path='/etc/rancher/k3s')
@@ -69,6 +69,15 @@ if host.name in nodes + [server_node]:
         master_ip=master_ip,
         wg_ip=host.host_data['wireguard_address'],
     )
+    files.template(
+        src='templates/kube/k3s_flannel.conf.j2',
+        dest='/etc/k3s_flannel.conf',
+        master_ip=master_ip,
+        wg_ip=host.host_data['wireguard_address'],
+    )
+    files.put(
+        src='templates/kube/flannel.link',  #
+        dest='/etc/systemd/network/10-flannel.link')  # then reboot
     files.template(
         src='templates/kube/k3s.service.j2',
         dest=f'/etc/systemd/system/{service_name}',

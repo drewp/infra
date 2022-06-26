@@ -53,7 +53,7 @@ metadata:
   namespace: kube-system
 data:
   Corefile: |
-    # update 2022-05-17T10:38
+    # update 2022-06-20T21:58
     .:53 {
         errors
         health
@@ -68,15 +68,13 @@ data:
           fallthrough
         }
         prometheus :9153
-        forward . 10.5.0.1
-        #/etc/resolv.conf
+        forward . dns://10.5.0.1
         cache 30
         loop
         reload
         loadbalance
         log
     }
-    import /etc/coredns/custom/*.server
 ---
 apiVersion: apps/v1
 kind: Deployment

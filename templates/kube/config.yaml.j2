@@ -4,6 +4,8 @@ bind-address: 0.0.0.0
 http-listen-port: 6443
 #{{ master_ip }}
 node-ip: {{ wg_ip }}
-
+flannel-backend: host-gw
+flannel-iface: ens5
+#flannel-conf: /etc/k3s_flannel.conf
 disable:
   - traefik
