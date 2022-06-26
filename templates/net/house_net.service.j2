@@ -4,5 +4,5 @@ After=docker.service
 
 [Service]
 Type=oneshot
-ExecStart=/usr/sbin/iptables -A POSTROUTING --table nat --out-interface eth0 --jump MASQUERADE
+ExecStart=/usr/sbin/iptables -A POSTROUTING --table nat --out-interface {{out_interface}} --jump MASQUERADE
 

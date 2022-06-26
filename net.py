@@ -7,6 +7,7 @@ is_wifi = host.name in ['frontdoor', 'living', 'plus']
 def cleanup():
     # past attempts
     files.file(path='/etc/netplan/99-pyinfra-written.yaml', present=False)
+    files.file(path='/etc/network/interfaces', present=False)
 
     for search_dir in [
             # search path per `man systemd.network`:
@@ -51,6 +52,9 @@ elif host.name == 'bang':
     files.template(src="templates/net/bang_10.2.network.j2", dest="/etc/systemd/network/99-10.2.network")
     files.template(src="templates/net/bang_isp.network.j2", dest="/etc/systemd/network/99-isp.network")
     systemd.service(service='systemd-networkd.service', enabled=True, running=True, restarted=True)
+    server.sysctl(key='net.ipv4.ip_forward', value=1, persist=True)
+    files.template(src="templates/net/house_net.service.j2", dest="/etc/systemd/system/house_net.service", out_interface='ens4')
+    systemd.service(service='house_net.service', daemon_reload=True, enabled=True, running=True, restarted=True)
 
 elif host.name == 'plus':
     pass
@@ -63,9 +67,8 @@ elif host.name == 'pipe':
     files.template(src="templates/net/pipe_10.2.network.j2", dest="/etc/systemd/network/99-10.2.network")
     files.template(src="templates/net/pipe_isp.network.j2", dest="/etc/systemd/network/99-isp.network")
     systemd.service(service='systemd-networkd.service', enabled=True, running=True, restarted=True)
-    systemd.service(service='networking.service', enabled=False, running=False)
     server.sysctl(key='net.ipv4.ip_forward', value=1, persist=True)
-    files.template(src="templates/net/house_net.service.j2", dest="/etc/systemd/system/house_net.service")
+    files.template(src="templates/net/house_net.service.j2", dest="/etc/systemd/system/house_net.service", out_interface='eth0')
     systemd.service(service='house_net.service', daemon_reload=True, enabled=True, running=True, restarted=True)
 
 
