@@ -1,9 +1,8 @@
 # run key dns lookups everywhere
 import tempfile
 
-import requests
 from pyinfra import host
-from pyinfra.operations import apt, files, server, systemd
+from pyinfra.operations import server
 
 
 def check(name, addr):
@@ -29,7 +28,6 @@ prime
 projects.bigasterisk.com
 etc
 
-(or another idea: wireguard everywhere all the time)
 '''
 
 if host.name in ['dash', 'bang', 'slash']:
@@ -47,7 +45,7 @@ if host.name in ['prime']:
     check('slash', '10.5.0.6')
 else:
     check('bang', '10.2.0.1')
-    check('slash', '10.2.0.127')
+    check('slash', '10.2.0.145')
 
 check('bang5', '10.5.0.1')
 check('prime', '10.5.0.2')

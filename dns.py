@@ -27,19 +27,18 @@ def prepare_dhcp_hosts():
     dhcp_hosts.flush()
     return dhcp_hosts
 
-
-#files.link('/etc/resolv.conf', '/run/systemd/resolve/stub-resolv.conf')
-
-# files.file(path='/etc/resolv.conf', present=False)
-# files.link(path='/etc/resolv.conf', present=False)  # bug
-# server.shell(["rm -f /etc/resolv.conf"])  # broken fix
-files.template(src='templates/resolv.conf.j2',
-               dest='/etc/resolv.conf',
-               # review this- it's probably a bad dep on bang. maybe both 10.5.0.1 and a public ns would be ok
-               ns='10.5.0.1' if host.name in ['prime', 'plus'] else '10.2.0.1',
-               force=True)
+def resolv_conf_use_systemd_networkd():
+    files.link(path='/etc/resolv.conf', target='/run/systemd/resolve/resolv.conf', force=True)
+def resolv_conf_static_file():
+    files.file(path='/etc/resolv.conf', present=False, force=True)
+    files.template(src='templates/resolv.conf.j2',
+                dest='/etc/resolv.conf',
+                # review this- it's probably a bad dep on bang. maybe both 10.5.0.1 and a public ns would be ok
+                ns='10.5.0.1' if host.name in ['prime', 'plus'] else '10.2.0.1',
+                force=True)
 
 if host.name == 'bang':
+    resolv_conf_static_file()
     apt.packages(packages=['dnsmasq'])
     systemd.service(service='dnsmasq', enabled=False, running=False)
     files.directory(path='/opt/dnsmasq')
@@ -65,6 +64,7 @@ if host.name in [
         'prime',
         'pipe'
 ]:
+    resolv_conf_use_systemd_networkd()
     files.template(src='templates/hosts.j2', dest='/etc/hosts')
     files.template(src='templates/resolved.conf.j2', dest='/etc/systemd/resolved.conf')
     systemd.service(service='systemd-resolved.service', running=True, restarted=True)

@@ -24,10 +24,10 @@ try:
 
             r = subprocess.run(
                 ['kubectl', 'exec', f'pod/{podName}'] + ['--'] +  #
-                ['dnsget', '-q', lookupName],
+                ['dnsget', '-o', 'timeout:2', '-q', lookupName],
                 capture_output=True)
             result = (r.stdout + r.stderr).decode('ascii').strip().replace('\n', '; ')
             print(f'looked up {lookupName} from pod on {runningOn} -> {result}')
 
 finally:
-    subprocess.check_call(["skaffold", "delete"], cwd="/my/proj/infra/k8s_lookup/")
+    pass#subprocess.check_call(["skaffold", "delete"], cwd="/my/proj/infra/k8s_lookup/")
