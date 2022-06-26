@@ -77,7 +77,13 @@ if not is_pi:
         'oping',
         'mtr-tiny',
         'tcpdump',
+        'reptyr',
     ])
+    if host.name != 'pipe':
+        apt.packages(packages=[
+            'reptyr',
+        ])
+
     vers = '0.25.2' # see https://github.com/kovidgoyal/kitty/releases
     home = '/home/drewp'
     local = f"{home}/.local/kitty"
