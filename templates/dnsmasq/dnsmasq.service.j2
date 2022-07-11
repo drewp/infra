@@ -21,6 +21,9 @@ Requires=wg-quick@wg0.service
 [Service]
 Type=simple
 
+# 10.5 will not work until wg0 interface is actually up, so just let it retry
+SuccessExitStatus=2
+
 # Test the config file and refuse starting if it is not valid.
 ExecStartPre=/usr/sbin/dnsmasq --conf-file=/opt/dnsmasq/{{ net }}/dnsmasq.conf --test
 
