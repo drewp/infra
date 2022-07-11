@@ -6,22 +6,25 @@ Address = {{wireguard_ip}}/24
 PrivateKey = {{priv_key}}
 ListenPort = 1195
 
+# suggested by https://i.reddit.com/r/WireGuard/comments/jcwleo/ubuntu_2004_lts_server_as_wireguard_client/
+#FwMark = 0x4000
+
 {% if host.name == 'bang' %}
-    {{ peer_block('dash',        'X39ewB2uYLZTFaG+RFeLpyOrnCgjc4wRKrcV0Jz3sTM=', '10.5.0.5/32',  'dash:1195') }}
-    {{ peer_block('dot',         'sav1VQE1XzbOGfNjDRxcHAmEWtmVGYC1B7KXH+5IKxY=', '10.5.0.30/32', 'dot:1195') }}
-    {{ peer_block('frontbed',    'ENhRhEgGaFfwV74MqYBHJgkOFpNAF5kVHVK5/tRVTjU=', '10.5.0.17/32', 'frontbed:1195') }}
-    {{ peer_block('garage',      'kFMtVafPU8kJHYmdafc1g/OLRnNPQMGpYKcDqQ9rUjA=', '10.5.0.14/32', 'garage:1195') }}
+    {{ peer_block('dash',        'X39ewB2uYLZTFaG+RFeLpyOrnCgjc4wRKrcV0Jz3sTM=', '10.5.0.5/32') }}
+    {{ peer_block('dot',         'sav1VQE1XzbOGfNjDRxcHAmEWtmVGYC1B7KXH+5IKxY=', '10.5.0.30/32') }}
+    {{ peer_block('frontbed',    'ENhRhEgGaFfwV74MqYBHJgkOFpNAF5kVHVK5/tRVTjU=', '10.5.0.17/32') }}
+    {{ peer_block('garage',      'kFMtVafPU8kJHYmdafc1g/OLRnNPQMGpYKcDqQ9rUjA=', '10.5.0.14/32') }}
     {{ peer_block('prime',       'vR9lfsUSOIMxkY/k2gRJ6E8ZudccfPpVhrbE9zuxalU=', '10.5.0.0/24',  'public.bigasterisk.com:1195', 50) }}
-    {{ peer_block('slash',       'IRLLt2yFuXVJbpevAj9d84mGAvi6SbJr1AwLAK/pBTM=', '10.5.0.6/32',  'slash:1195') }}
-    {{ peer_block('pipe',        'yI0zt8/+baHjadhiBCX6u8sSkhjoh/Q5cIZkGf1H6S4=', '10.5.0.3/32',  'pipe:1195') }}
-{% elif host.name == 'prime' %}
-    {{ peer_block('bang',        'pAxirNVF08R6zYyudhTKjZ9fqC9UKMxknfLi5A39QVY=', '10.5.0.0/24') }}
+    {{ peer_block('slash',       'IRLLt2yFuXVJbpevAj9d84mGAvi6SbJr1AwLAK/pBTM=', '10.5.0.6/32') }}
+    {{ peer_block('pipe',        'yI0zt8/+baHjadhiBCX6u8sSkhjoh/Q5cIZkGf1H6S4=', '10.5.0.3/32') }}
     {{ peer_block('plus',        'tH2og4BbXaH6BrHSBd73Fx1XT0DxR8vjQxjqHFa913A=', '10.5.0.110/32') }}
+{% elif host.name == 'prime' %}
+    {{ peer_block('bang',        'xDkAqfljmeVj7bB6VslxD/vVwlUh/vLXX5Wo7ZCoTQ4=', '10.5.0.0/24') }}
     {{ peer_block('drew-note10', 'QMgx4cmuUTfJ7RH4Q46b54tSQl4eISOmdEney17fnE8=', '10.5.0.112/32') }}
 {% elif host.name == 'plus' %}
-    {{ peer_block('bang',        'pAxirNVF08R6zYyudhTKjZ9fqC9UKMxknfLi5A39QVY=', '10.5.0.0/24', '10.2.0.1:1195', 50) }}
+    {{ peer_block('bang',        'xDkAqfljmeVj7bB6VslxD/vVwlUh/vLXX5Wo7ZCoTQ4=', '10.5.0.0/24', '10.2.0.1:1195', 50) }}
 {% else %}
     # I see bang at 10.2.0.1
-    {{ peer_block('bang',        'pAxirNVF08R6zYyudhTKjZ9fqC9UKMxknfLi5A39QVY=', '10.5.0.0/24', '10.2.0.1:1195', 50) }}
+    {{ peer_block('bang',        'xDkAqfljmeVj7bB6VslxD/vVwlUh/vLXX5Wo7ZCoTQ4=', '10.5.0.0/24', '10.2.0.1:1195', 50) }}
 {% endif %}
 

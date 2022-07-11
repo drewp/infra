@@ -4,7 +4,8 @@ After=systemd-networkd.service
 
 [Service]
 Type=oneshot
-ExecStart=/usr/sbin/iptables -A POSTROUTING --table nat --out-interface {{out_interface}} --jump MASQUERADE
+# haven't yet debugged why this doesn't work right away
+ExecStart=bash -c "sleep 10; /usr/sbin/iptables -A POSTROUTING --table nat --out-interface {{out_interface}} --jump MASQUERADE"
 
 [Install]
 WantedBy=multi-user.target

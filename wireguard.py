@@ -12,6 +12,10 @@ from pyinfra.operations import apt, files, server, systemd
 
 
 def peer_block(hostname, public_key, allowed_ips, endpoint=None, keepalive=None):
+    # if allowed_ips.startswith('10.5'):
+    #     # k3s nets also need to travel over wg
+    #     allowed_ips += ', 10.42.0.0/24, 10.43.0.0/24'
+
     out = f'''\
 
 [Peer]
@@ -33,7 +37,6 @@ for wireguard_interface in ['wg0', 'bogasterisk']:
     # note- this is specific to the wg0 setup. Other conf files don't use it.
     wireguard_ip = host.host_data['wireguard_address']
 
-    apt.packages(packages=['wireguard'])
     # new pi may fail with 'Unable to access interface: Protocol not supported'. reboot fixes.
 
     priv_key_lines = host.get_fact(FindInFile, path=f'/etc/wireguard/{wireguard_interface}.conf', pattern=r'PrivateKey.*')
@@ -65,7 +68,4 @@ for wireguard_interface in ['wg0', 'bogasterisk']:
     systemd.service(service=svc, daemon_reload=True, restarted=True, enabled=True)
 
 if host.name == 'bang':
-    # recompute, or else maybe dnsmasq_10.5 won't start
-    server.shell("systemctl enable dnsmasq_10.2.service")
-    server.shell("systemctl enable dnsmasq_10.5.service")
-    server.shell("systemctl enable wg-quick@wg0.service")
+    systemd.service(service=f'dnsmasq_10.5', enabled=True, restarted=True, daemon_reload=True)

@@ -4,6 +4,9 @@ log-facility=-
 
 listen-address={{ net }}.0.1
 {% if net == "10.2" %}
+# dnsmasq will not automatically listen on the loopback interface. To achieve
+# this, its IP address, 127.0.0.1, must be explicitly given as a
+# --listen-address option.
 listen-address=127.0.0.1
 {% endif %}
 bind-interfaces

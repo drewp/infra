@@ -22,7 +22,7 @@ def cleanup():
             delete=True,
         )
 
-    apt.packages(packages=['network-manager'], present=False)
+    apt.packages(packages=['network-manager', 'connman'], present=False)
 
     # On bang:
     #   Now using a HW router for this firewall. No incoming connections.

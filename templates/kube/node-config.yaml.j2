@@ -1,6 +1,8 @@
-debug: false
-node-external-ip: {{ wg_ip }}
+#debug: true
+#node-external-ip: {{ wg_ip }}
 node-ip: {{ wg_ip }}
 token: {{ token }}
 server: https://{{ master_ip }}:6443 
-resolv-conf: /etc/k3s_resolv.conf
+#resolv-conf: /etc/k3s_resolv.conf
+# flannel-iface: wg0
+no-flannel: true
