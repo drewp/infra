@@ -1,8 +1,10 @@
 [Unit]
 After=systemd-networkd.service
-After=docker.service
+#After=docker.service
 
 [Service]
 Type=oneshot
 ExecStart=/usr/sbin/iptables -A POSTROUTING --table nat --out-interface {{out_interface}} --jump MASQUERADE
 
+[Install]
+WantedBy=multi-user.target

@@ -48,7 +48,7 @@ if is_pi and host.name != 'pipe':
 #
 
 # don't try to get aufs-dkms on rpi-- https://github.com/docker/for-linux/issues/709
-if not is_pi:
+if False and not is_pi: # maybe add podman? but do it in packages.py
     apt.packages(packages=['docker.io'], no_recommends=True)
     files.put(src='files/docker_daemon.json', dest='/etc/docker/daemon.json')
     systemd.service(service='docker', running=True, enabled=True, restarted=True)

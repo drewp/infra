@@ -54,13 +54,17 @@ apt.packages(packages=[
     'ncdu',
     "udns-utils",
     "atool",
+    "wireguard-tools",
     'iproute2', # needed for wireguard
+    'kitty-terminfo',
+    'zsh',
+    'xosview',
 ])
 
 if not is_pi:
     apt.packages(packages=[
         'keychain',
-        'python3-docker',
+        'podman-docker',
         'python3-invoke',
         'python3-pip',
         'python3-virtualenv',
@@ -77,7 +81,7 @@ if not is_pi:
         'oping',
         'mtr-tiny',
         'tcpdump',
-        'reptyr',
+        'htop',
     ])
     if host.name != 'pipe':
         apt.packages(packages=[
@@ -109,6 +113,7 @@ if not is_pi and host.name not in ['prime', 'pipe']:
 
 if host.name == "bang":
     apt.packages(packages=[
+        'dnsmasq',
         'iptables',
         'openntpd',
         'ntpdate',
