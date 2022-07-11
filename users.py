@@ -28,7 +28,7 @@ for group in [
     server.group(group=group, system=True)
 
 server.group(group='drewp', gid=drewp_gid)
-server.user(user='drewp', group='drewp', groups=drewp_groups)
+server.user(user='drewp', uid=drewp_uid, group='drewp', groups=drewp_groups)
 
 if not is_pi:
     server.group(group='adm', gid=4)
