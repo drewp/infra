@@ -63,26 +63,29 @@ apt.packages(packages=[
 
 if not is_pi:
     apt.packages(packages=[
+        'debian-goodies',
+        'ethtool',
+        'htop',
+        'iotop',
         'keychain',
-        'podman-docker',
+        'lpr',
+        'mercurial',
+        'mtr-tiny',
+        'net-tools',
+        'nodejs',
+        'npm',
+        'oping',
         'python3-invoke',
         'python3-pip',
         'python3-virtualenv',
-        'sysstat',
-        'debian-goodies',
-        'lxterminal',
-        'iotop',
-        'lpr',
-        'nodejs',
-        'npm',
-        'ethtool',
         'speedtest-cli',
-        'net-tools',
-        'oping',
-        'mtr-tiny',
+        'sysstat',
         'tcpdump',
-        'htop',
     ])
+    if host.name in ['dash', 'slash', 'bang']:
+        apt.packages(packages=[
+            'podman-docker',
+        ])
     if host.name != 'pipe':
         apt.packages(packages=[
             'reptyr',
