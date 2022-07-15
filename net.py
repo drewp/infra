@@ -35,10 +35,10 @@ def cleanup():
 
 server.sysctl(key='net.ipv6.conf.all.disable_ipv6', value=1, persist=True)
 
+files.directory('/etc/systemd/network')
 if host.name == 'prime':
     cleanup()
 
-    files.directory('/etc/systemd/network')
     files.template(
         src="templates/net/prime.network.j2",
         dest="/etc/systemd/network/99-prime.network",
@@ -48,14 +48,10 @@ if host.name == 'prime':
 elif host.name == 'bang':
     cleanup()
 
-    files.directory('/etc/systemd/network')
-
     files.template(src="templates/net/bang_10.2.network.j2", dest="/etc/systemd/network/99-10.2.network")
-    files.template(src="templates/net/bang_isp.network.j2", dest="/etc/systemd/network/99-isp.network")
-    systemd.service(service='systemd-networkd.service', enabled=True, running=True, restarted=True)
-    server.sysctl(key='net.ipv4.ip_forward', value=1, persist=True)
-    files.template(src="templates/net/house_net.service.j2", dest="/etc/systemd/system/house_net.service", out_interface='ens4')
-    systemd.service(service='house_net.service', daemon_reload=True, enabled=True, running=True, restarted=True)
+    files.file(path="/etc/systemd/network/99-isp.network", present=False)
+    files.file(path="/etc/systemd/system/house_net.service", present=False)
+    systemd.service(service='house_net.service', enabled=False, running=False)
 
 elif host.name == 'plus':
     pass
@@ -63,11 +59,8 @@ elif host.name == 'plus':
 elif host.name == 'pipe':   
     cleanup()
 
-    files.directory('/etc/systemd/network')
-
     files.template(src="templates/net/pipe_10.2.network.j2", dest="/etc/systemd/network/99-10.2.network")
     files.template(src="templates/net/pipe_isp.network.j2", dest="/etc/systemd/network/99-isp.network")
-    systemd.service(service='systemd-networkd.service', enabled=True, running=True, restarted=True)
     server.sysctl(key='net.ipv4.ip_forward', value=1, persist=True)
     files.template(src="templates/net/house_net.service.j2", dest="/etc/systemd/system/house_net.service", out_interface='eth0')
     systemd.service(service='house_net.service', daemon_reload=True, enabled=True, running=True, restarted=True)
@@ -79,15 +72,10 @@ else:
     if is_wifi:
         files.put(src="secrets/wpa_supplicant.conf", dest="/etc/wpa_supplicant/wpa_supplicant.conf")
 
-    # addr = host.host_data['addr']
-    # net = addr[:4]
-    # gateway = net + '.0.1'
-    # dns = gateway
-
     files.template(
         src="templates/net/singlenic.network.j2",
         dest="/etc/systemd/network/99-bigasterisk.network",
         create_remote_dir=True,
-        mac=host.host_data['mac'],
     )
-    systemd.service(service='systemd-networkd.service', enabled=True, running=True, restarted=True)
+
+systemd.service(service='systemd-networkd.service', enabled=True, running=True, restarted=True)
