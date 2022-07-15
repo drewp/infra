@@ -1,33 +1,5 @@
-import subprocess
-import tempfile
-
-import requests
 from pyinfra import host
-from pyinfra.operations import apt, files, server, systemd
-
-
-def prepare_dhcp_hosts():
-    empty = tempfile.NamedTemporaryFile(mode='wt')
-    return empty
-    lanscape_ip = subprocess.check_output([
-        'kubectl',
-        'get',
-        'svc',
-        'lanscape',
-        "-o=jsonpath={.spec.clusterIP}",
-    ],
-                                          encoding='ascii')
-    url = f'http://{lanscape_ip}/dnsConfig'
-    resp = requests.get(url)
-    resp.raise_for_status()
-    lanscape_config = resp.json()
-
-    dhcp_hosts = tempfile.NamedTemporaryFile(mode='wt', encoding='ascii')
-    dhcp_hosts.write("# written by pyinfra\n\n")
-    for row in lanscape_config['dhcp_table']:
-        dhcp_hosts.write(f'{row["mac"]},{row["hostname"]},{row["ip"]},24h\n')
-    dhcp_hosts.flush()
-    return dhcp_hosts
+from pyinfra.operations import apt, files, systemd
 
 
 def resolv_conf_use_systemd_networkd():
@@ -53,10 +25,7 @@ def dnsmasq_instance(net_name, house_iface, dhcp_range, router):
         house_iface=house_iface,
         dhcp_range=dhcp_range,
         router=router,
-        dhcp_enabled=net_name == '10.2' and host.name in [
-            #'bang',
-            'pipe',
-        ])
+        dhcp_enabled=net_name == '10.2' and host.name == 'pipe')
     files.template(src='templates/dnsmasq/hosts.j2', dest=f'/opt/dnsmasq/{net_name}/hosts', net=net_name)
     files.template(src='/dev/null', dest=f'/opt/dnsmasq/{net_name}/dhcp_hosts', net=net_name)
 
@@ -65,7 +34,6 @@ def dnsmasq_instance(net_name, house_iface, dhcp_range, router):
                    net=net_name)
     if net_name == '10.2':
         systemd.service(service=f'dnsmasq_{net_name}', enabled=True, restarted=True, daemon_reload=True)
-        # 10.5 is after wireguard setup
 
 
 files.template(src='templates/hosts.j2', dest='/etc/hosts')
@@ -78,9 +46,6 @@ if host.name == 'bang':
     systemd.service(service='dnsmasq', enabled=False, running=False)
     files.directory(path='/opt/dnsmasq')
 
-    #dhcp_hosts = prepare_dhcp_hosts()
-
-    # dnsmasq_instance('10.2', house_iface='ens5', dhcp_range='unused', router='unused')
     dnsmasq_instance('10.5', house_iface='unused', dhcp_range='unused', router='unused')  # only works after wireguard is up
 
 elif host.name == 'pipe':
