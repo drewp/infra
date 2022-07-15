@@ -1,18 +1,5 @@
-#debug: true
 write-kubeconfig-mode: '640'
-
-#bind-address: 0.0.0.0
-#http-listen-port: 6443
-#{{ master_ip }}
-#node-ip: {{ wg_ip }}
-#flannel-backend: host-gw
-#flannel-iface: wg0
-#flannel-conf: /etc/k3s_flannel.conf
+node-ip: {{ wg_ip }}
 disable:
   - traefik
-
-node-ip: {{ wg_ip }}
-flannel-backend: none
-disable-network-policy: true
-cluster-cidr: 172.16.0.0/16
-service-cidr: 172.26.0.0/16
+flannel-backend: host-gw
