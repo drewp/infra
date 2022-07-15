@@ -20,3 +20,7 @@ if is_pi:
             'ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBOR+iV8Qm/rAfmq0epXYfnp5ZTfBl8eidFzw1GmyZ3fPUFAshWn839fQ5DPj9xDPtMy9kTtrB5bK1SnynFzDqzQ= drewp@bang',
     ]:
         files.line(path=auth_keys, line=pubkey, replace=pubkey)
+
+if not is_pi:
+    files.line(path='/etc/ssh/sshd_config', line="^UseDNS\b", replace="UseDNS no")
+    systemd.service(service='sshd', reloaded=True)
