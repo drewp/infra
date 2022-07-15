@@ -67,5 +67,5 @@ for wireguard_interface in ['wg0', 'bogasterisk']:
 
     systemd.service(service=svc, daemon_reload=True, restarted=True, enabled=True)
 
-if host.name == 'bang':
-    systemd.service(service=f'dnsmasq_10.5', enabled=True, restarted=True, daemon_reload=True)
+# if host.name == 'bang':
+#     systemd.service(service=f'dnsmasq_10.5', enabled=True, restarted=True, daemon_reload=True)
