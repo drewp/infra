@@ -2,7 +2,7 @@ user=nobody
 keep-in-foreground
 log-facility=-
 
-listen-address={{ net }}.0.1
+listen-address={{ router }}
 {% if net == "10.2" %}
 # dnsmasq will not automatically listen on the loopback interface. To achieve
 # this, its IP address, 127.0.0.1, must be explicitly given as a
@@ -23,20 +23,21 @@ dns-forward-max=1000
 domain=bigasterisk.com
 # log-queries
 # log-debug
+
+{% if dhcp_enabled %}
 log-dhcp
 
 dhcp-sequential-ip
-
-{% if net == "10.2" %}
 dhcp-broadcast
 dhcp-authoritative
 dhcp-option=option:domain-name,bigasterisk.com
 dhcp-hostsfile=/opt/dnsmasq/{{ net }}/dhcp_hosts
 dhcp-leasefile=/opt/dnsmasq/{{ net }}/leases
-dhcp-range=ens5,10.2.0.0,static,infinite
-dhcp-range=tag:!known,ens5,10.2.0.125,10.2.0.220,24h
-dhcp-option=ens5,option:dns-server,10.2.0.1
-dhcp-option=ens5,option:router,10.2.0.1
+dhcp-range={{ house_iface }},10.2.0.0,static,infinite
+dhcp-range=tag:!known,{{ house_iface }},{{ dhcp_range }},24h
+dhcp-option={{ house_iface }},option:dns-server,{{ router }}
+dhcp-option={{ house_iface }},option:router,{{ router }}
+{% endif %}
 
 local=/bigasterisk.com/
 # i didn't say --all-servers, but it was behaving like that
@@ -44,10 +45,9 @@ server=208.201.224.11
 #server=208.201.224.33
 #server=8.8.4.4
 #server=8.8.8.8
-{% endif %}
 
 {% if net == "10.5" %}
 # net==10.5 is not used for dhcp at all
 # use ./hosts, then try the server that knows the dhcp leases
-server=10.2.0.1
+server={{ router }}
 {% endif %}

@@ -1,11 +1,14 @@
+# written by pyinfra
+
 [Unit]
-After=systemd-networkd.service
-#After=docker.service
+After=network-online.target nss-lookup.target
+Wants=network-online.target nss-lookup.target
 
 [Service]
 Type=oneshot
-# haven't yet debugged why this doesn't work right away
-ExecStart=bash -c "sleep 10; /usr/sbin/iptables -A POSTROUTING --table nat --out-interface {{out_interface}} --jump MASQUERADE"
+ExecStart=/usr/sbin/iptables -A POSTROUTING --table nat --out-interface eth0 --jump MASQUERADE
+RemainAfterExit=yes
+
 
 [Install]
 WantedBy=multi-user.target
