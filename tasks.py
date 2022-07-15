@@ -70,6 +70,10 @@ def sync(ctx):
 def mail(ctx):
     ctx.run(cmd + 'inventory.py mail.py ', pty=True)
 
+@task
+def pipe(ctx):
+    ctx.run(cmd + 'inventory.py pipe.py --limit pipe', pty=True)
+
 
 @task
 def all(ctx):
