@@ -33,6 +33,7 @@ def cleanup():
     #   https://cloud.digitalocean.com/networking/firewalls/f68899ae-1aac-4469-b379-59ce2bbc988f/droplets?i=7c5072
     apt.packages(packages=['ufw'], present=False)
 
+server.sysctl(key='net.ipv6.conf.all.disable_ipv6', value=1, persist=True)
 
 if host.name == 'prime':
     cleanup()
