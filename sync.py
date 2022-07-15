@@ -2,9 +2,9 @@ from pyinfra import host
 from pyinfra.facts.server import LinuxDistribution
 from pyinfra.operations import apt, systemd
 
-# bang instance is in k8s (/my/serv/filesync/syncthing); the rest are run with systemd.
+# primary instance is in k8s (/my/serv/filesync/syncthing); the rest are run with systemd.
 # Configs are in ~/.config/syncthing/ on each box
-if host.name in ['dash', 'dot', 'slash', 'plus']:
+if host.name in ['dash', 'dot', 'slash', 'plus', 'bang']:
     apt.packages(packages=['syncthing'])
 
     # now we have /lib/systemd/system/syncthing@.service
