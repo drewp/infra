@@ -1,5 +1,5 @@
 import os
-import tempfile
+
 from pyinfra import host
 from pyinfra.facts.files import FindInFile
 from pyinfra.facts.server import Arch, LinuxDistribution
@@ -75,8 +75,8 @@ def host_prep():
 def config_and_run_service():
     download_k3s()
     service_name = 'k3s.service' if host.name == server_node else 'k3s-node.service'
-    which_conf = 'config.yaml.j2' if host.name == server_node else 'node-config.yaml.j2'
     role = 'server' if host.name == server_node else 'agent'
+    which_conf = 'config-server.yaml.j2' if host.name == server_node else 'config-agent.yaml.j2'
 
     # /var/lib/rancher/k3s/server/node-token is the source of the string in secrets/k3s_token,
     # so this presumes a previous run
@@ -94,9 +94,6 @@ def config_and_run_service():
         token=token,
         wg_ip=host.host_data['wireguard_address'],
     )
-    # files.put(
-    #     src='templates/kube/flannel.link',  #
-    #     dest='/etc/systemd/network/10-flannel.link')  # then reboot
     files.template(
         src='templates/kube/k3s.service.j2',
         dest=f'/etc/systemd/system/{service_name}',
@@ -105,48 +102,23 @@ def config_and_run_service():
     systemd.service(service=service_name, daemon_reload=True, enabled=True, restarted=True)
 
 
-# See https://github.com/rancher/k3s/issues/1802 and https://rancher.com/docs/k3s/latest/en/installation/private-registry/
-files.directory(path='/etc/rancher/k3s')
-
 if host.name in nodes + [server_node]:
     host_prep()
+    files.directory(path='/etc/rancher/k3s')
 
-    # not until registry is up, right?
+    # docs: https://rancher.com/docs/k3s/latest/en/installation/private-registry/
+    # user confusions: https://github.com/rancher/k3s/issues/1802
     files.template(src='templates/kube/registries.yaml.j2', dest='/etc/rancher/k3s/registries.yaml')
     config_and_run_service()
 
-# if host.name == server_node:
-#     files.put(
-#         src="templates/kube/coredns.yaml",
-#         dest="/var/lib/rancher/k3s/server/manifests/coredns.yaml",
-#         mode="600",
-#     )
-    # files.put(
-    #     src="templates/kube/coredns-map.yaml",
-    #     dest="/var/lib/rancher/k3s/server/manifests/coredns-map.yaml",
-    #     mode="600",
-    # )
-    # tmp = tempfile.NamedTemporaryFile(suffix='.yaml')
-    # files.template(
-    #     src='templates/kube/Corefile.yaml.j2',
-    #     dest=tmp.name,
-    # )
-    # server.shell(commands=[
-    #     'kubectl replace configmap '
-    #     # '-n kube-system '
-    #     # 'coredns '
-    #     f'--filename={tmp.name} '
-    #     '-o yaml '
-    #     # '--dry-run=client | kubectl apply -',
-    # ])
-
 if host.name in admin_from:
+    files.directory(path='/etc/rancher/k3s')
     install_skaffold()
     files.link(path='/usr/local/bin/kubectl', target='/usr/local/bin/k3s')
     files.directory(path='/home/drewp/.kube', user='drewp', group='drewp')
     files.line(path="/home/drewp/.zshrc", line="KUBECONFIG", replace='export KUBECONFIG=/etc/rancher/k3s/k3s.yaml')
 
-    # assumes pyinfra is running on server_node
+    # assumes our pyinfra process is running on server_node
     files.put(
         src='/etc/rancher/k3s/k3s.yaml',
         dest='/etc/rancher/k3s/k3s.yaml',  #

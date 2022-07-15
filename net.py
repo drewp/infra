@@ -1,7 +1,8 @@
 from pyinfra import host
-from pyinfra.operations import apt, files, server, systemd
+from pyinfra.operations import apt, files, server, ssh, systemd
 
 is_wifi = host.name in ['frontdoor', 'living', 'plus']
+is_wifi_pi = host.name in ['frontdoor']
 
 
 def cleanup():
@@ -33,8 +34,13 @@ def cleanup():
     #   https://cloud.digitalocean.com/networking/firewalls/f68899ae-1aac-4469-b379-59ce2bbc988f/droplets?i=7c5072
     apt.packages(packages=['ufw'], present=False)
 
+
 server.sysctl(key='net.ipv6.conf.all.disable_ipv6', value=1, persist=True)
 
+if is_wifi_pi:
+    files.put(dest="/etc/network/interfaces.d/wlan0", src="files/pi_wlan0_powersave")
+    ssh.command(host.name, "iw wlan0 set power_save off")
+    
 files.directory('/etc/systemd/network')
 if host.name == 'prime':
     cleanup()
@@ -56,7 +62,7 @@ elif host.name == 'bang':
 elif host.name == 'plus':
     pass
 
-elif host.name == 'pipe':   
+elif host.name == 'pipe':
     cleanup()
 
     files.template(src="templates/net/pipe_10.2.network.j2", dest="/etc/systemd/network/99-10.2.network")
@@ -64,7 +70,6 @@ elif host.name == 'pipe':
     server.sysctl(key='net.ipv4.ip_forward', value=1, persist=True)
     files.template(src="templates/net/house_net.service.j2", dest="/etc/systemd/system/house_net.service", out_interface='eth0')
     systemd.service(service='house_net.service', daemon_reload=True, enabled=True, running=True, restarted=True)
-
 
 else:
     cleanup()

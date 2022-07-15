@@ -1,5 +1,4 @@
 from pyinfra import host
-from pyinfra.facts.server import LinuxDistribution
 from pyinfra.operations import apt, systemd
 
 # primary instance is in k8s (/my/serv/filesync/syncthing); the rest are run with systemd.

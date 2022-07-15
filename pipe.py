@@ -1,15 +1,9 @@
-import os
-import tempfile
-
-from pyinfra import host
-from pyinfra.facts.files import FindInFile
-from pyinfra.facts.server import Arch, LinuxDistribution
-from pyinfra.operations import apt, files, server, systemd, git
+from pyinfra.operations import apt, files, git, server
 
 
 def ntop():
     files.directory('/opt/ntop')
-    
+
     apt.packages(packages=[
         "build-essential", "git", "bison", "flex", "libxml2-dev", "libpcap-dev", "libtool", "libtool-bin", "rrdtool",
         "librrd-dev", "autoconf", "pkg-config", "automake", "autogen", "redis-server", "wget", "libsqlite3-dev", "libhiredis-dev",
