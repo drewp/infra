@@ -1,7 +1,7 @@
-from pyinfra.operations import apt, files, git, server
+from pyinfra.operations import apt, files, git, server, systemd
 
 
-def ntop():
+def ntop_build():
     files.directory('/opt/ntop')
 
     apt.packages(packages=[
@@ -18,5 +18,11 @@ def ntop():
     server.shell('cd /opt/ntop/nDPI; ./autogen.sh; ./configure; make -j 6')
     server.shell('cd /opt/ntop/ntopng; ./autogen.sh; ./configure; make -j 6')
 
+def ntop_run():
 
-ntop()
+    files.template(src="templates/pipe/ntop.service.j2", dest="/etc/systemd/system/ntop.service")
+    systemd.service(service='ntop.service', daemon_reload=True, enabled=True, running=True, restarted=True)
+
+
+# ntop_build()
+ntop_run()
