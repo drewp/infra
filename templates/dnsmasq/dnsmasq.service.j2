@@ -12,7 +12,8 @@ After=network.target
 #    wg-quick@wg0.service
 #    dnsmasq_10.5
 {% if net == '10.2' %}
-#Before=wg-quick@wg0.service
+Before=wg-quick@wg0.service
+After=house_net.service
 {% endif %}
 {% if net == '10.5' %}
 Requires=wg-quick@wg0.service

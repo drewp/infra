@@ -6,7 +6,7 @@ Wants=network-online.target nss-lookup.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/sbin/iptables -A POSTROUTING --table nat --out-interface eth0 --jump MASQUERADE
+ExecStart=sh -c "sysctl net.ipv4.ip_forward=1 && /usr/sbin/iptables -A POSTROUTING --table nat --out-interface eth0 --jump MASQUERADE"
 RemainAfterExit=yes
 
 

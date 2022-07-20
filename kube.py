@@ -64,13 +64,6 @@ def host_prep():
     if is_pi:
         pi_cgroup_setup()
 
-    # https://github.com/k3s-io/k3s/issues/1812 unclear
-    server.shell(commands=[
-        'update-alternatives --set iptables /usr/sbin/iptables-legacy',
-        'update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy',
-    ])
-    # needs reboot if this changed
-
 
 def config_and_run_service():
     download_k3s()
@@ -109,6 +102,7 @@ if host.name in nodes + [server_node]:
     # docs: https://rancher.com/docs/k3s/latest/en/installation/private-registry/
     # user confusions: https://github.com/rancher/k3s/issues/1802
     files.template(src='templates/kube/registries.yaml.j2', dest='/etc/rancher/k3s/registries.yaml')
+    # also note that podman dropped the default `docker.io/` prefix on image names (see https://unix.stackexchange.com/a/701785/419418)
     config_and_run_service()
 
 if host.name in admin_from:

@@ -35,6 +35,14 @@ def cleanup():
     apt.packages(packages=['ufw'], present=False)
 
 
+# https://github.com/k3s-io/k3s/issues/1812 unclear, but more importantly, this has to be set
+# on pipe in a way that works with the commands in house_net.service (and net_routes)
+server.shell(commands=[
+    'update-alternatives --set iptables /usr/sbin/iptables-legacy',
+    'update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy',
+])
+# needs reboot if this changed
+
 server.sysctl(key='net.ipv6.conf.all.disable_ipv6', value=1, persist=True)
 
 if is_wifi_pi:
