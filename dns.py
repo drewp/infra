@@ -1,8 +1,9 @@
+import tempfile
 from pyinfra import host
 from pyinfra.operations import apt, files, systemd
 
 
-def dnsmasq_instance(net_name, house_iface, dhcp_range, router):
+def dnsmasq_instance(net_name, house_iface, dhcp_range, router, dhcp_hosts_filename='/dev/null'):
     files.directory(path=f'/opt/dnsmasq/{net_name}')
     files.template(src='templates/dnsmasq/dnsmasq.conf.j2',
                    dest=f'/opt/dnsmasq/{net_name}/dnsmasq.conf',
@@ -12,7 +13,7 @@ def dnsmasq_instance(net_name, house_iface, dhcp_range, router):
                    router=router,
                    dhcp_enabled=net_name == '10.2' and host.name == 'pipe')
     files.template(src='templates/dnsmasq/hosts.j2', dest=f'/opt/dnsmasq/{net_name}/hosts', net=net_name)
-    files.template(src='/dev/null', dest=f'/opt/dnsmasq/{net_name}/dhcp_hosts', net=net_name)
+    files.template(src=dhcp_hosts_filename, dest=f'/opt/dnsmasq/{net_name}/dhcp_hosts', net=net_name)
 
     files.template(src='templates/dnsmasq/dnsmasq.service.j2',
                    dest=f'/etc/systemd/system/dnsmasq_{net_name}.service',
@@ -37,7 +38,12 @@ elif host.name == 'pipe':
     apt.packages(packages=['dnsmasq'])
     systemd.service(service='dnsmasq', enabled=False, running=False)
     files.directory(path='/opt/dnsmasq')
-    dnsmasq_instance('10.2', house_iface='eth1', dhcp_range='10.2.0.20,10.2.0.120', router='10.2.0.3')
+    dh = tempfile.NamedTemporaryFile()
+    dh.write(b'''\
+60:e3:27:04:4a:85,bang,10.2.0.1,24h
+''')
+    dh.flush()
+    dnsmasq_instance('10.2', house_iface='eth1', dhcp_range='10.2.0.20,10.2.0.120', router='10.2.0.3', dhcp_hosts_filename=dh.name)
 
 else:
     pass
