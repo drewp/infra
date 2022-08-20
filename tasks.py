@@ -74,6 +74,11 @@ def mail(ctx):
 
 
 @task
+def home(ctx):
+    ctx.run(cmd + 'inventory.py home.py', pty=True)
+
+
+@task
 def pipe(ctx):
     ctx.run(cmd + 'inventory.py pipe.py --limit pipe', pty=True)
 
@@ -91,6 +96,7 @@ def all(ctx):
         'kube.py',
         'sync.py',
         'mail.py',
+        'home.py',
     ]
     # https://github.com/Fizzadar/pyinfra/issues/787
     #ctx.run(' '.join([cmd, 'inventory.py'] + configs), pty=True)
