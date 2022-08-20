@@ -58,8 +58,29 @@ if not is_pi:
 if host.name == 'pipe':
     apt.packages(packages=['mandb', 'apt-listchanges'], present=False)
     files.template(src='templates/odroid_sources.list.j2', dest='/etc/apt/sources.list', rel='focal')
+    apt.packages(packages=[
+        'python3-iptables',
+        'podman-docker',
+    ])
 elif is_pi:
     pi_sources()
+
+apt.packages(packages=[
+    'build-essential',
+    'dstat',
+    'ifstat',
+    'iptables',
+    'iproute2',  # needed for wireguard
+    'kitty-terminfo',
+    'mosquitto-clients',
+    'ncdu',
+    'rsync',
+    'xosview',
+    'zsh',
+    "atool",
+    "udns-utils",
+    "wireguard-tools",
+])
 
 if not is_pi:
     if host.name != 'prime':
@@ -79,6 +100,7 @@ if not is_pi:
         'iotop',
         'keychain',
         'lpr',
+        'lua5.3',
         'mercurial',
         'mtr-tiny',
         'net-tools',
@@ -104,21 +126,6 @@ if not is_pi:
     kitty()
     pnpm()
 
-apt.packages(packages=[
-    'build-essential',
-    'dstat',
-    'ifstat',
-    'iproute2',  # needed for wireguard
-    'kitty-terminfo',
-    'mosquitto-clients',
-    'ncdu',
-    'rsync',
-    'xosview',
-    'zsh',
-    "atool",
-    "udns-utils",
-    "wireguard-tools",
-])
 
 proper_locate()
 
@@ -136,4 +143,6 @@ if host.name == "bang":
 if host.name == 'plus':
     apt.packages(packages=[
         'network-manager',
+        'brightnessctl',
+        'xserver-xorg-input-synaptics',
     ])
