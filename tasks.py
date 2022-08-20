@@ -82,6 +82,13 @@ def home(ctx):
 def pipe(ctx):
     ctx.run(cmd + 'inventory.py pipe.py --limit pipe', pty=True)
 
+@task
+def multikube(ctx):
+    from multikube_config import server_node, nodes
+    ctx.run(cmd + 'inventory.py multikube_wipe.py', pty=True)
+    ctx.run(cmd + f'inventory.py multikube.py --limit {server_node}', pty=True)
+    ctx.run(cmd + f'inventory.py multikube.py --limit {",".join(nodes)}', pty=True)
+
 
 @task
 def all(ctx):
